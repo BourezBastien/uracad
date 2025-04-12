@@ -84,18 +84,8 @@ Ce projet est distribué sous licence Apache 2.0 avec Commons Clause. Cette lice
 
 Voir le fichier `LICENSE` pour plus d'informations.
 
-## 🙏 Remerciements
-
-- [FiveM](https://fivem.net/)
-- [ESX Framework](https://github.com/esx-framework)
-- [QBCore Framework](https://github.com/qbcore-framework)
-- Tous les contributeurs et testeurs qui aident à améliorer UraCAD
-
 ---
 
 <div align="center">
   <p>Développé avec ❤️ par l'équipe <a href="https://urahost.com">UraHost</a></p>
-  <a href="https://urahost.com">
-    <img src="path/to/urahost-logo.png" alt="UraHost Logo" width="120"/>
-  </a>
 </div>
