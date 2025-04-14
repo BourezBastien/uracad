@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["prismaSchemaFolder"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL_UNPOOLED")
+}
+
+model Feedback {
+  id      String  @id @default(nanoid(11))
+  review  Int
+  message String
+  email   String?
+  userId  String?
+  user    User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Department {
+  id             String       @id @default(cuid())
+  name           String
+  description    String?
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  roles          CustomRole[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([name, organizationId])
+  @@index([organizationId])
+}
+
+model CustomRole {
+  id             String   @id @default(cuid())
+  name           String
+  description    String?
+  permissions    String // Stocke les permissions au format JSON
+  color          String? // Couleur du rôle (format hex)
+  position       Int // Position hiérarchique (comme Discord)
+  organizationId String
+  members        Member[] // Relation avec les membres qui utilisent ce rôle
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id])
+
+  @@unique([name, organizationId])
+  @@index([departmentId])
+  @@map("custom_role")
+}
