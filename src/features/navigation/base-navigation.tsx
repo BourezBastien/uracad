@@ -41,7 +41,7 @@ const BaseSidebar = () => {
       <SidebarHeader>
         <div className="mb-4 flex flex-row items-center gap-2">
           <Image
-            src="/images/logo.png"
+            src="/images/icon.png"
             alt="Logo"
             width={24}
             height={24}

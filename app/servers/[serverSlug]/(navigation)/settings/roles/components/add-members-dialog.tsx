@@ -106,6 +106,7 @@ export function AddMembersDialog({ isOpen, onOpenChange, roleId, roleName }: Add
   // Gérer l'ajout des membres sélectionnés au rôle
   const handleAddMembersToRole = () => {
     if (!selectedMemberIds.length || !roleId) return;
+    
     addMembersMutation.mutate({ roleId, memberIds: selectedMemberIds });
   };
 
