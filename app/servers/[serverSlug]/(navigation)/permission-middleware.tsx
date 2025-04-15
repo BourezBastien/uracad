@@ -6,16 +6,18 @@ import { Layout } from "@/features/page/layout";
 import { logger } from "@/lib/logger";
 import { SERVER_LINKS } from "./permissions/routes-config";
 import { useSelectedLayoutSegments } from "next/navigation";
+
 type PermissionMiddlewareProps = PropsWithChildren & {
   serverSlug: string;
   isPowerUser: boolean;
+  userPermissions: string[];
 };
 
-// Composant client qui récupère le pathname
 export function PermissionMiddleware({ 
   children,
   serverSlug,
   isPowerUser,
+  userPermissions,
 }: PermissionMiddlewareProps) {
   const segments = useSelectedLayoutSegments();
   const pathname = segments.length > 0 ? `/${segments.join('/')}` : '/';
@@ -24,6 +26,7 @@ export function PermissionMiddleware({
     serverSlug,
     pathname,
     isPowerUser,
+    userPermissions,
   });
 
   // Si l'utilisateur est admin ou owner, on autorise tout
@@ -50,6 +53,23 @@ export function PermissionMiddleware({
     logger.info("Route found with no restrictions, granting access");
     return <>{children}</>;
   }
+
+  // Vérifier les permissions spécifiques
+  if (requiredAccess.permissions) {
+    const hasRequiredPermissions = requiredAccess.permissions.some(permission => 
+      userPermissions.includes(permission)
+    );
+
+    if (hasRequiredPermissions) {
+      logger.info("User has required permissions, granting access");
+      return <>{children}</>;
+    }
+  }
+
+  logger.info("Access denied - user lacks required permissions", {
+    requiredPermissions: requiredAccess.permissions,
+    userPermissions,
+  });
 
   return (
     <Layout>

@@ -115,11 +115,11 @@ export const ServerDetailsForm = ({ defaultValues }: ProductFormProps) => {
           />
         </CardContent>
       </Card>
-      <Card className="flex items-end p-6">
+      <div className="flex justify-end p-6">
         <Button type="submit" className="w-fit">
           Save
         </Button>
-      </Card>
+      </div>
     </FormAutoSave>
   );
 };
