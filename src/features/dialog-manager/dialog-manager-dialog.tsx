@@ -106,7 +106,7 @@ export const DialogManagerRendererDialog = (
         </AlertDialogHeader>
         {props.confirmText && (
           <div>
-            <Typography>
+            <Typography className="mb-2">
               Please type{" "}
               <Typography variant="code">{props.confirmText}</Typography> to
               confirm the action.

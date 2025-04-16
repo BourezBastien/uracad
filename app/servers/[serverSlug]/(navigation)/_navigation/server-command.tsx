@@ -13,7 +13,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Link, Search } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useKey } from "react-use";
@@ -75,7 +75,7 @@ export function ServerCommand() {
                     );
                   }}
                 >
-                  <link.Icon className="mr-2 size-4" />
+                  <Link className="mr-2 size-4" />
                   <span>{link.label}</span>
                 </CommandItem>
               ))}

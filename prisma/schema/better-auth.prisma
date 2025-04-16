@@ -81,6 +81,7 @@ model Organization {
   invitations Invitation[]
   email       String?
   Department  Department[]
+  citizens    Citizen[]
 
   @@unique([slug])
   @@map("organization")

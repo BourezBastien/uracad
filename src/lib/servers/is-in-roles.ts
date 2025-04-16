@@ -13,5 +13,7 @@ export const isInRoles = (userRoles?: AuthRole[], rolesNeeded?: AuthRole[]) => {
   if (userRoles.includes("owner")) return true;
 
   if (!rolesNeeded) return true;
-  return rolesNeeded.every((role) => userRoles.includes(role));
+  
+  // L'utilisateur doit avoir au moins un des rôles requis
+  return rolesNeeded.some((role) => userRoles.includes(role));
 };

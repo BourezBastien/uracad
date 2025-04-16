@@ -208,7 +208,8 @@ export const getServerMembersAction = serverAction
       });
 
       return members.map(member => ({
-        id: member.userId,
+        id: member.id,
+        userId: member.userId,
         name: member.user.name || "Utilisateur sans nom",
         email: member.user.email || "",
         image: member.user.image,
@@ -243,7 +244,7 @@ export const addMembersToRoleAction = serverAction
       const validMembers = await prisma.member.findMany({
         where: {
           organizationId: ctx.id,
-          userId: {
+          id: {
             in: input.memberIds,
           },
         },
@@ -483,6 +484,38 @@ export const deleteDepartmentAction = serverAction
     }
   });
 
+// Action pour rechercher des rôles
+export const searchRolesAction = serverAction
+  .schema(z.object({
+    query: z.string(),
+  }))
+  .action(async ({ parsedInput: input, ctx }) => {
+    try {
+      if (!input.query || input.query.trim().length < 2) {
+        return [];
+      }
+
+      const roles = await prisma.customRole.findMany({
+        where: {
+          organizationId: ctx.id,
+          name: {
+            contains: input.query,
+            mode: "insensitive",
+          },
+        },
+        orderBy: {
+          position: 'asc',
+        },
+        take: 5,
+      });
+
+      return roles;
+    } catch (error) {
+      logger.error("Erreur lors de la recherche des rôles:", error);
+      throw new ActionError("Impossible de rechercher les rôles");
+    }
+  });
+
 // Versions enveloppées avec resolveActionResult pour une utilisation plus facile dans les composants
 export async function createRoleServerAction(input: z.infer<typeof RoleSchema>) {
   return resolveActionResult(createRoleAction(input));
@@ -522,4 +555,8 @@ export async function getDepartmentsServerAction(input: z.infer<typeof GetDepart
 
 export async function deleteDepartmentServerAction(input: z.infer<typeof DeleteDepartmentSchema>) {
   return resolveActionResult(deleteDepartmentAction(input));
+}
+
+export async function searchRolesServerAction(query: string) {
+  return resolveActionResult(searchRolesAction({ query }));
 } 

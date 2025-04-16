@@ -18,6 +18,7 @@ export type NavigationLink = {
     | LucideIcon;
   label: string;
   roles?: AuthRole[];
+  permissions?: string[];
   hidden?: boolean;
   links?: NavigationLink[];
 };

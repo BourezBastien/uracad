@@ -28,7 +28,7 @@ export const ImageFormItem = ({
       )}
     >
       <img
-        src={currentImage ?? "/images/placeholder.svg"}
+        src={currentImage ?? "/images/placeholder1.gif"}
         className="absolute inset-0 object-contain object-center"
         alt=""
       />

@@ -28,6 +28,7 @@ import { ServersSelect } from "./server-select";
 import { ServerCommand } from "./server-command";
 import { getServerNavigation } from "./server-navigation.links";
 import { UpgradeCard } from "./upgrade-server-card";
+import { logger } from "@/lib/logger";
 
 
 export function ServerSidebar({
@@ -39,7 +40,30 @@ export function ServerSidebar({
   roles: AuthRole[] | undefined;
   userServers: AuthServer[];
 }) {
-  const links: NavigationGroup[] = getServerNavigation(slug, roles);
+  const [userPermissions, setUserPermissions] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchPermissions = async () => {
+      try {
+        const response = await fetch(`/api/servers/${slug}/check-permission/user-permissions`);
+        
+        if (!response.ok) {
+          setUserPermissions([]);
+          return;
+        }
+        
+        const { permissions } = await response.json();
+        setUserPermissions(permissions ?? []);
+      } catch (error) {
+        logger.error("Failed to fetch user permissions:", { error });
+        setUserPermissions([]);
+      }
+    };
+    
+    void fetchPermissions();
+  }, [slug]);
+
+  const links: NavigationGroup[] = getServerNavigation(slug, roles, userPermissions);
 
   return (
     <Sidebar variant="inset">
