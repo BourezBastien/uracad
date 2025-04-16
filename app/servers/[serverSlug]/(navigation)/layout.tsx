@@ -1,9 +1,17 @@
 import type { LayoutParams } from "@/types/next";
-import { ServerNavigation } from "./_navigation/server-navigation";
-
+import { ServerNavigationWrapper } from "./_navigation/server-navigation-wrapper";
+import { PermissionWrapper } from "./permission-wrapper";
 
 export default async function RouteLayout(
   props: LayoutParams<{ serverSlug: string }>,
 ) {
-  return <ServerNavigation>{props.children}</ServerNavigation>;
+  const params = await props.params;
+  
+  return (
+    <ServerNavigationWrapper>
+      <PermissionWrapper serverSlug={params.serverSlug}>
+        {props.children}
+      </PermissionWrapper>
+    </ServerNavigationWrapper>
+  );
 }

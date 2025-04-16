@@ -1,27 +1,20 @@
-import type {
-  NavigationGroup,
-  NavigationLink,
-} from "@/features/navigation/navigation.type";
 import type { AuthRole } from "@/lib/auth/auth-permissions";
-import { isInRoles } from "@/lib/servers/is-in-roles";
-import {
-  CreditCard,
-  Home,
-  Settings,
-  TriangleAlert,
-  User,
-  User2,
-  Shield,
-} from "lucide-react";
-
-const replaceSlug = (href: string, slug: string) => {
-  return href.replace(":serverSlug", slug);
-};
+import { 
+  type NavigationGroup, 
+  type NavigationLink,
+  SERVER_LINKS,
+  replaceSlug,
+  isInRoles
+} from "../permissions/routes-config";
 
 export const getServerNavigation = (
   slug: string,
   userRoles: AuthRole[] | undefined,
+  userPermissions: string[] = [],
 ): NavigationGroup[] => {
+  // Vérifier si l'utilisateur est admin ou owner
+  const isPowerUser = userRoles?.some(role => role === "owner" || role === "admin") ?? false;
+
   return SERVER_LINKS.map((group: NavigationGroup) => {
     return {
       ...group,
@@ -29,9 +22,26 @@ export const getServerNavigation = (
         ? replaceSlug(group.defaultOpenStartPath, slug)
         : undefined,
       links: group.links
-        .filter((link: NavigationLink) =>
-          link.roles ? isInRoles(userRoles, link.roles) : true,
-        )
+        .filter((link: NavigationLink) => {
+          // Les utilisateurs admin et owner voient tout
+          if (isPowerUser) return true;
+          
+          // Vérifier les rôles si nécessaire
+          const hasRequiredRoles = link.roles 
+            ? isInRoles(userRoles, link.roles) 
+            : true;
+            
+          // Vérifier les permissions si nécessaire
+          const hasRequiredPermissions = link.permissions
+            ? link.permissions.some(perm => userPermissions.includes(perm))
+            : false;
+            
+          // Si aucun rôle ni permission n'est spécifié, l'élément est visible par défaut
+          const isDefaultAccess = !link.roles && !link.permissions;
+            
+          // L'élément est visible si l'utilisateur a les rôles OU les permissions requises OU s'il s'agit d'un lien sans restriction
+          return Boolean(hasRequiredRoles) || Boolean(hasRequiredPermissions) || Boolean(isDefaultAccess);
+        })
         .map((link: NavigationLink) => {
           return {
             ...link,
@@ -42,57 +52,5 @@ export const getServerNavigation = (
   });
 };
 
-const SERVER_PATH = `/servers/:serverSlug`;
-
-export const SERVER_LINKS: NavigationGroup[] = [
-  {
-    title: "Menu",
-    links: [
-      {
-        href: SERVER_PATH,
-        Icon: Home,
-        label: "Dashboard",
-      },
-      {
-        href: `${SERVER_PATH}/users`,
-        Icon: User,
-        label: "Users",
-      },
-    ],
-  },
-  {
-    title: "Server",
-    defaultOpenStartPath: `${SERVER_PATH}/settings`,
-    links: [
-      {
-        href: `${SERVER_PATH}/settings`,
-        Icon: Settings,
-        label: "Settings",
-      },
-      {
-        href: `${SERVER_PATH}/settings/members`,
-        Icon: User2,
-        label: "Members",
-        roles: ["admin"],
-      },
-      {
-        href: `${SERVER_PATH}/settings/roles`,
-        Icon: Shield,
-        label: "Roles",
-        roles: ["admin"],
-      },
-      {
-        href: `${SERVER_PATH}/settings/billing`,
-        label: "Billing",
-        roles: ["admin"],
-        Icon: CreditCard,
-      },
-      {
-        href: `${SERVER_PATH}/settings/danger`,
-        label: "Danger Zone",
-        roles: ["owner"],
-        Icon: TriangleAlert,
-      },
-    ],
-  },
-] satisfies NavigationGroup[];
+// Réexporter les liens pour d'autres composants qui pourraient en avoir besoin
+export { SERVER_LINKS } from "../permissions/routes-config";

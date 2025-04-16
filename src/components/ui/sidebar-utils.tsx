@@ -10,7 +10,6 @@ import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ComponentProps } from "react";
-import type { SidebarMenuButtonProps } from "./sidebar";
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -24,7 +23,7 @@ export const SidebarMenuButtonLink = ({
   href,
   children,
   ...props
-}: SidebarMenuButtonProps & { href: string }) => {
+}: ComponentProps<typeof SidebarMenuButton> & { href: string }) => {
   const pathname = usePathname();
 
   return (

@@ -1,9 +1,28 @@
-import { headers } from "next/headers";
 import { unauthorized } from "next/navigation";
 import { auth } from "../auth";
 import type { AuthPermission, AuthRole } from "../auth/auth-permissions";
 import { getSession } from "../auth/auth-user";
 import { isInRoles } from "./is-in-roles";
+import { logger } from "../logger";
+
+// Helper to check if code is running on server or client
+const isServer = typeof window === 'undefined';
+
+// Dynamic import for headers to avoid static import errors in pages directory
+const getHeadersModule = async () => {
+  if (isServer) {
+    try {
+      // Dynamic import only on server
+      const { headers } = await import("next/headers");
+      return { headers };
+    } catch (error) {
+      // If we're in pages directory, headers won't be available
+      logger.error("Could not import next/headers, falling back to empty headers", { error });
+      return { headers: () => new Headers() };
+    }
+  }
+  return { headers: () => new Headers() };
+};
 
 type ServerParams = {
   roles?: AuthRole[];
@@ -12,6 +31,7 @@ type ServerParams = {
 
 export const getCurrentServer = async (params?: ServerParams) => {
   const user = await getSession();
+  const { headers } = await getHeadersModule();
 
   if (!user) {
     return null;

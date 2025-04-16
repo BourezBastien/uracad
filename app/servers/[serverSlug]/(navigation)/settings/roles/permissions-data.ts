@@ -42,6 +42,13 @@ export const permissionDescriptions: Record<string, string> = {
   DEAFEN_MEMBERS: "Permet aux membres de rendre sourd d'autres membres dans les salons vocaux.",
   MOVE_MEMBERS: "Permet aux membres de déplacer d'autres membres entre les salons vocaux.",
   
+  // Citoyen
+  CREATE_CITIZENS: "Permet aux membres de créer des profils de citoyens.",
+  EDIT_CITIZENS: "Permet aux membres de modifier les informations des citoyens existants.",
+  REGISTER_VEHICLES: "Permet aux membres d'enregistrer des véhicules.",
+  REGISTER_WEAPONS: "Permet aux membres d'enregistrer des armes.",
+  CREATE_COMPANIES: "Permet aux membres de créer des entreprises.",
+  
   // Avancé
   ADMINISTRATOR: "Les membres avec cette permission ont tous les droits et ignorent les permissions spécifiques à chaque salon.",
   VIEW_AUDIT_LOG: "Permet aux membres de voir un récapitulatif des personnes ayant effectué différentes actions sur le serveur.",
@@ -124,6 +131,7 @@ export const permissionCategories: PermissionCategory[] = [
     name: "Citoyen",
     permissions: [
       { id: "CREATE_CITIZENS", name: "Créer des citoyens" },
+      { id: "EDIT_CITIZENS", name: "Modifier des citoyens" },
       { id: "REGISTER_VEHICLES", name: "Enregistrer des véhicules" },
       { id: "REGISTER_WEAPONS", name: "Enregistrer des armes" },
       { id: "CREATE_COMPANIES", name: "Créer des entreprises" },
