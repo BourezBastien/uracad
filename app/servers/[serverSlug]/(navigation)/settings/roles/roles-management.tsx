@@ -161,10 +161,9 @@ export function RolesManagement({
       // Fermer la boîte de dialogue
       setIsDeleteDialogOpen(false);
       
-      // Forcer un rechargement complet de la page après un délai pour que le toast s'affiche
+      // Rafraîchir l'UI de façon optimisée sans reload complet
       startTransition(() => {
         router.refresh();
-        window.location.reload();
       });
     },
     onError: (error) => toast.error(`Erreur: ${error.message}`),

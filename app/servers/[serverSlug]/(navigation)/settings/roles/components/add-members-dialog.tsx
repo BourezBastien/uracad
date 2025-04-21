@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Search, Loader2 } from "lucide-react";
+import { Search, Loader2, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { resolveActionResult } from "@/lib/actions/actions-utils";
 import { useMutation } from "@tanstack/react-query";
@@ -36,17 +36,19 @@ export function AddMembersDialog({ isOpen, onOpenChange, roleId, roleName }: Add
   const [searchMember, setSearchMember] = useState("");
   const [members, setMembers] = useState<Member[]>([]);
   const [selectedMemberIds, setSelectedMemberIds] = useState<string[]>([]);
-
-  // Récupérer les membres du serveur
+  const [isFirstLoaded, setIsFirstLoaded] = useState(false);
+  
+  // Récupérer les membres du serveur (sans auto-chargement)
   const getMembersMutation = useMutation({
-    mutationFn: async (query?: string) => {
-      return resolveActionResult(getServerMembersAction({ query }));
+    mutationFn: async ({ query, roleId }: { query?: string; roleId?: string }) => {
+      return resolveActionResult(getServerMembersAction({ query, roleId }));
     },
     onError: (error) => {
       toast.error(`Erreur: ${error.message}`);
     },
     onSuccess: (data) => {
       setMembers(data);
+      setIsFirstLoaded(true);
     },
   });
 
@@ -60,37 +62,34 @@ export function AddMembersDialog({ isOpen, onOpenChange, roleId, roleName }: Add
     },
     onSuccess: (data) => {
       toast.success(`${data.count} membre(s) ajouté(s) au rôle avec succès`);
+      
+      // Fermer directement, pas besoin de setTimeout
       onOpenChange(false);
     },
   });
 
-  // Effet pour charger les membres quand le dialogue s'ouvre
-  useEffect(() => {
-    if (isOpen && members.length === 0) {
-      getMembersMutation.mutate(undefined);
-    }
-  }, [isOpen, members.length, getMembersMutation]);
-
-  // Effet pour rechercher les membres quand on tape dans la barre de recherche
-  useEffect(() => {
-    if (!isOpen || !searchMember.trim()) return;
-    
-    const debounceSearch = setTimeout(() => {
-      getMembersMutation.mutate(searchMember);
-    }, 300);
-    
-    return () => clearTimeout(debounceSearch);
-  }, [searchMember, isOpen, getMembersMutation]);
-
-  // Supprimer handleSearch car la recherche est maintenant gérée par le debounce
-  const handleSearch = () => {
-    if (searchMember.trim()) {
-      getMembersMutation.mutate(searchMember);
+  // Charger les membres (manuellement)
+  const loadMembers = () => {
+    if (roleId && !getMembersMutation.isPending) {
+      getMembersMutation.mutate({ 
+        query: searchMember.trim() || undefined, 
+        roleId 
+      });
     }
   };
 
-  // Filtrer les membres en fonction de la recherche locale (déjà filtré côté serveur)
-  const filteredMembers = members;
+  // Fonction manuelle pour gérer la recherche
+  const handleSearch = () => {
+    loadMembers();
+  };
+
+  // Réinitialiser tout
+  const resetState = () => {
+    setSelectedMemberIds([]);
+    setSearchMember("");
+    setMembers([]);
+    setIsFirstLoaded(false);
+  };
 
   // Ajouter ou retirer un membre de la sélection
   const toggleMemberSelection = (memberId: string) => {
@@ -110,21 +109,72 @@ export function AddMembersDialog({ isOpen, onOpenChange, roleId, roleName }: Add
     addMembersMutation.mutate({ roleId, memberIds: selectedMemberIds });
   };
 
-  const resetState = () => {
-    setSelectedMemberIds([]);
-    setSearchMember("");
-  };
-
   const isLoading = getMembersMutation.isPending;
   const isAddingMembers = addMembersMutation.isPending;
+
+  // Interface utilisateur conditionnelle
+  let membersContent;
+  
+  if (isLoading) {
+    membersContent = (
+      <div className="flex flex-col items-center justify-center py-8">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <p className="mt-2 text-sm text-muted-foreground">Chargement des membres...</p>
+      </div>
+    );
+  } else if (!isFirstLoaded) {
+    membersContent = (
+      <div className="flex flex-col items-center justify-center py-8 space-y-2">
+        <p className="text-muted-foreground">Cliquez sur le bouton pour charger les membres</p>
+        <Button onClick={loadMembers} variant="outline" size="sm">
+          <RefreshCw className="mr-2 h-4 w-4" />
+          Charger les membres
+        </Button>
+      </div>
+    );
+  } else if (members.length === 0) {
+    membersContent = (
+      <div className="text-center py-8 text-muted-foreground">
+        {searchMember.trim() 
+          ? "Aucun membre ne correspond à votre recherche." 
+          : "Aucun membre disponible à ajouter. Tous les utilisateurs sont déjà assignés ou vous n'avez pas encore ajouté de membres à votre serveur."}
+      </div>
+    );
+  } else {
+    membersContent = (
+      <div className="space-y-1">
+        {members.map(member => (
+          <div 
+            key={member.id}
+            className="flex items-center space-x-3 py-2 px-3 hover:bg-muted/60 rounded cursor-pointer"
+            onClick={() => toggleMemberSelection(member.id)}
+          >
+            <Checkbox 
+              checked={selectedMemberIds.includes(member.id)}
+              onCheckedChange={() => toggleMemberSelection(member.id)}
+            />
+            <div className="flex-1 min-w-0">
+              <div className="font-medium">{member.name}</div>
+              <div className="text-xs text-muted-foreground truncate">{member.email}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <Dialog 
       open={isOpen} 
       onOpenChange={(open) => {
-        onOpenChange(open);
-        if (!open) {
-          resetState();
+        if (!addMembersMutation.isPending) {
+          onOpenChange(open);
+          if (!open) {
+            resetState();
+          } else if (!isFirstLoaded) {
+            // Charger automatiquement la première fois que la modal s'ouvre
+            loadMembers();
+          }
         }
       }}
     >
@@ -144,49 +194,24 @@ export function AddMembersDialog({ isOpen, onOpenChange, roleId, roleName }: Add
                 placeholder="Rechercher par nom ou email" 
                 value={searchMember}
                 onChange={(e) => setSearchMember(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleSearch();
+                  }
+                }}
               />
             </div>
             <Button 
               variant="outline" 
               onClick={handleSearch}
-              disabled={!searchMember.trim()}
+              disabled={isLoading || !roleId}
             >
               Rechercher
             </Button>
           </div>
           <div className="max-h-[280px] overflow-y-auto border rounded-md p-1">
-            {isLoading ? (
-              <div className="flex flex-col items-center justify-center py-8">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                <p className="mt-2 text-sm text-muted-foreground">Chargement des membres...</p>
-              </div>
-            ) : filteredMembers.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                {searchMember.trim() 
-                  ? "Aucun membre ne correspond à votre recherche." 
-                  : "Aucun membre disponible."}
-              </div>
-            ) : (
-              <div className="space-y-1">
-                {filteredMembers.map(member => (
-                  <div 
-                    key={member.id}
-                    className="flex items-center space-x-3 py-2 px-3 hover:bg-muted/60 rounded cursor-pointer"
-                    onClick={() => toggleMemberSelection(member.id)}
-                  >
-                    <Checkbox 
-                      checked={selectedMemberIds.includes(member.id)}
-                      onCheckedChange={() => toggleMemberSelection(member.id)}
-                    />
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium">{member.name}</div>
-                      <div className="text-xs text-muted-foreground truncate">{member.email}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+            {membersContent}
           </div>
           {selectedMemberIds.length > 0 && (
             <div className="text-sm text-muted-foreground">
@@ -195,7 +220,11 @@ export function AddMembersDialog({ isOpen, onOpenChange, roleId, roleName }: Add
           )}
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button 
+            variant="outline" 
+            onClick={() => onOpenChange(false)}
+            disabled={addMembersMutation.isPending}
+          >
             Annuler
           </Button>
           <Button 

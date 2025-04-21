@@ -11,8 +11,10 @@ export async function POST(
 ) {
   try {
     // Vérifier l'authentification et récupérer l'utilisateur
+
+    const { serverSlug } = await params;
     const user = await getRequiredUser();
-    const server = await getRequiredServerBySlug(params.serverSlug);
+    const server = await getRequiredServerBySlug(serverSlug);
 
     // Récupérer les données de la requête
     const { permissions, mode = "OR" } = await req.json();

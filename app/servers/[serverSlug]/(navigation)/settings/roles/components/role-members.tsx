@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { UserPlus, Trash2 } from "lucide-react";
@@ -43,12 +43,34 @@ export function RoleMembers({ roleId, roleName, onMembersCountChange }: RoleMemb
   const [memberToRemove, setMemberToRemove] = useState<string | null>(null);
   const [showAllMembers, setShowAllMembers] = useState(false);
   const [isLoadingMembers, setIsLoadingMembers] = useState(false);
+  
+  // Ajouter une référence pour suivre la dernière requête 
+  const lastLoadTimestamp = useRef<number>(0);
+  const lastRoleId = useRef<string | null>(null);
+  const loadingInProgress = useRef<boolean>(false);
 
   // Charger les membres
-  const loadMembers = useCallback(async () => {
+  const loadMembers = useCallback(async (force = false) => {
     if (!roleId) return;
     
+    // Éviter les requêtes multiples rapprochées pour le même rôle
+    const now = Date.now();
+    const minTimeBetweenLoads = 1000; // 1 seconde entre les chargements
+    
+    // Si une requête est déjà en cours, on l'ignore
+    if (loadingInProgress.current) return;
+    
+    // Si ce n'est pas forcé, et qu'on charge le même rôle récemment, ignorer
+    if (!force && 
+        roleId === lastRoleId.current && 
+        now - lastLoadTimestamp.current < minTimeBetweenLoads) {
+      return;
+    }
+    
     setIsLoadingMembers(true);
+    loadingInProgress.current = true;
+    lastRoleId.current = roleId;
+    lastLoadTimestamp.current = now;
     
     try {
       const data = await resolveActionResult(getRoleMembersAction({ roleId }));
@@ -62,13 +84,14 @@ export function RoleMembers({ roleId, roleName, onMembersCountChange }: RoleMemb
       toast.error(`Erreur lors du chargement des membres: ${error instanceof Error ? error.message : "inconnu"}`);
     } finally {
       setIsLoadingMembers(false);
+      loadingInProgress.current = false;
     }
   }, [roleId, onMembersCountChange]);
 
   // Charger les membres au montage et lors du changement de rôle
   useEffect(() => {
-    if (roleId) {
-      void loadMembers();
+    if (roleId && roleId !== lastRoleId.current) {
+      void loadMembers(true); // Forcer le chargement sur changement de rôle
     }
   }, [roleId, loadMembers]);
 
@@ -82,8 +105,16 @@ export function RoleMembers({ roleId, roleName, onMembersCountChange }: RoleMemb
     },
     onSuccess: () => {
       toast.success("Membre retiré du rôle avec succès");
-      // Recharger manuellement après suppression
-      void loadMembers(); // Utiliser void pour ignorer la promesse
+      
+      // Recharger manuellement après suppression avec un petit délai
+      // pour laisser le temps à la base de données de se mettre à jour
+      setTimeout(() => {
+        void loadMembers(true); // Forcer le rechargement avec void pour ignorer la promesse
+        
+        // Rafraîchir aussi la page complète pour mettre à jour tous les composants
+        // y compris le cache des membres disponibles à ajouter
+        window.location.reload();
+      }, 500); // Augmenter légèrement le délai pour s'assurer que le toast est visible
     }
   });
 
@@ -93,7 +124,12 @@ export function RoleMembers({ roleId, roleName, onMembersCountChange }: RoleMemb
     
     // Si le dialog se ferme, recharger les membres
     if (!open && roleId) {
-      void loadMembers(); // Utiliser void pour ignorer la promesse
+      // Attendre un court instant pour éviter les problèmes de rendu
+      // Utiliser un délai plus long pour s'assurer que le dialogue est bien fermé
+      // et que la mutation a eu le temps de se terminer
+      setTimeout(() => {
+        void loadMembers(true); // Forcer le rechargement
+      }, 500);
     }
   };
 

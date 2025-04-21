@@ -25,10 +25,10 @@ import { usePathname } from "next/navigation";
 import type { PropsWithChildren } from "react";
 import { useEffect, useState } from "react";  
 import { ServersSelect } from "./server-select";
-import { ServerCommand } from "./server-command";
 import { getServerNavigation } from "./server-navigation.links";
 import { UpgradeCard } from "./upgrade-server-card";
 import { logger } from "@/lib/logger";
+import { ServerCommand } from "./server-command";
 
 
 export function ServerSidebar({

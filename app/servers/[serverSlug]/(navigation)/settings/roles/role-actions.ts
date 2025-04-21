@@ -28,6 +28,7 @@ const DeleteRoleSchema = z.object({
 // Schéma pour obtenir les membres d'un serveur
 const GetMembersSchema = z.object({
   query: z.string().optional(),
+  roleId: z.string().optional(),
 });
 
 // Schéma pour obtenir les membres d'un rôle
@@ -183,9 +184,25 @@ export const getServerMembersAction = serverAction
   .schema(GetMembersSchema)
   .action(async ({ parsedInput: input, ctx }) => {
     try {
+      if (!ctx.id) {
+        throw new ActionError("Contexte du serveur non disponible");
+      }
+
       const members = await prisma.member.findMany({
         where: {
           organizationId: ctx.id,
+          // Changer le filtre pour ne récupérer QUE les membres qui n'ont PAS ce rôle spécifique
+          // ou qui n'ont PAS de rôle du tout (customRoleId est null)
+          ...(input.roleId ? {
+            OR: [
+              { customRoleId: null },  // Membres sans rôle
+              { 
+                customRoleId: {
+                  not: input.roleId
+                }
+              }  // Membres avec un autre rôle
+            ]
+          } : {}),
           ...(input.query ? {
             user: {
               OR: [
@@ -205,15 +222,19 @@ export const getServerMembersAction = serverAction
             },
           },
         },
+        take: 50, // Limiter le nombre de résultats pour éviter les problèmes de performance
       });
-
-      return members.map(member => ({
+      
+      // Vérification de sécurité pour s'assurer que les données sont bien formatées
+      const formattedMembers = members.map(member => ({
         id: member.id,
         userId: member.userId,
         name: member.user.name || "Utilisateur sans nom",
         email: member.user.email || "",
         image: member.user.image,
       }));
+
+      return formattedMembers;
     } catch (error) {
       logger.error("Erreur lors de la récupération des membres:", error);
       throw new ActionError("Impossible de récupérer les membres du serveur");
@@ -278,6 +299,19 @@ export const addMembersToRoleAction = serverAction
   });
 
 // Action pour récupérer les membres d'un rôle spécifique
+// Ajouter un cache pour éviter des requêtes redondantes
+type RoleMemberData = {
+  id: string;
+  userId: string;
+  name: string;
+  email: string;
+  image?: string | null;
+  dateAdded?: Date;
+};
+
+const roleMembersCache = new Map<string, { data: RoleMemberData[]; timestamp: number }>();
+const CACHE_TTL = 5000; // 5 secondes de durée de vie du cache
+
 export const getRoleMembersAction = serverAction
   .metadata({
     roles: ["owner", "admin"],
@@ -285,6 +319,15 @@ export const getRoleMembersAction = serverAction
   .schema(GetRoleMembersSchema)
   .action(async ({ parsedInput: input, ctx }) => {
     try {
+      const cacheKey = `${ctx.id}-${input.roleId}`;
+      const now = Date.now();
+      const cachedData = roleMembersCache.get(cacheKey);
+      
+      // Utiliser les données en cache si elles existent et sont encore valides
+      if (cachedData && (now - cachedData.timestamp < CACHE_TTL)) {
+        return cachedData.data;
+      }
+      
       // Vérifier si le rôle existe avec une requête optimisée qui ne récupère que l'ID
       const role = await prisma.customRole.findFirst({
         where: {
@@ -320,7 +363,7 @@ export const getRoleMembersAction = serverAction
       });
 
       // Formater les données pour le front-end
-      return members.map(member => ({
+      const formattedMembers = members.map(member => ({
         id: member.id,
         userId: member.userId,
         name: (member.user.name as string | null) ?? "Utilisateur sans nom",
@@ -328,11 +371,25 @@ export const getRoleMembersAction = serverAction
         image: member.user.image,
         dateAdded: member.createdAt,
       }));
+      
+      // Stocker les données dans le cache
+      roleMembersCache.set(cacheKey, {
+        data: formattedMembers,
+        timestamp: now
+      });
+      
+      return formattedMembers;
     } catch (error) {
       logger.error("Erreur lors de la récupération des membres:", error);
       throw new ActionError("Impossible de récupérer les membres du rôle");
     }
   });
+
+// Fonction pour vider le cache des membres d'un rôle spécifique
+function clearRoleMembersCache(orgId: string, roleId: string) {
+  const cacheKey = `${orgId}-${roleId}`;
+  roleMembersCache.delete(cacheKey);
+}
 
 // Action pour supprimer un membre d'un rôle
 export const removeMemberFromRoleAction = serverAction
@@ -376,6 +433,9 @@ export const removeMemberFromRoleAction = serverAction
           customRoleId: null,
         },
       });
+
+      // Vider le cache pour forcer un rechargement frais des données
+      clearRoleMembersCache(ctx.id, input.roleId);
 
       return { success: true };
     } catch (error) {
