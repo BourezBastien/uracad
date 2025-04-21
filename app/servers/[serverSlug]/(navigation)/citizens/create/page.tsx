@@ -5,7 +5,7 @@ import {
   LayoutHeader, 
   LayoutTitle,
 } from "@/features/page/layout";
-import { CitizenForm } from "../citizen-form";
+import { CitizenForm } from "../_components/citizen-form";
 import { getRequiredCurrentServerCache } from "@/lib/react/cache";
 
 export default async function CreateCitizenPage() {

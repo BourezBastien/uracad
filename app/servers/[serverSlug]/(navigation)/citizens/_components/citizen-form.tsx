@@ -12,9 +12,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { createCitizen, updateCitizen } from "./citizens.action";
-import { CitizenSchema } from "./citizens.schema";
-import type { CitizenSchemaType } from "./citizens.schema";
+import { createCitizenAction, updateCitizenAction } from "../_actions/citizens.action";
+import { CitizenSchema } from "../citizens.schema";
+import type { CitizenSchemaType } from "../citizens.schema";
 import { useMutation } from "@tanstack/react-query";
 import { resolveActionResult } from "@/lib/actions/actions-utils";
 import { toast } from "sonner";
@@ -24,13 +24,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { LoadingButton } from "@/features/form/submit-button";
 import { ImageFormItem } from "@/features/images/image-form-item";
 import { DatePicker } from "@/components/ui/date-picker";
+import { generateSSN } from "../_utils/generate-ssn";
+import { Wand2 } from "lucide-react";
 
 type CitizenFormProps = {
   citizen?: Citizen | null;
   serverSlug: string;
+  onSuccess?: () => void;
 };
 
-export function CitizenForm({ citizen, serverSlug }: CitizenFormProps) {
+export function CitizenForm({ citizen, serverSlug, onSuccess }: CitizenFormProps) {
   const router = useRouter();
   const isEditing = !!citizen;
 
@@ -69,14 +72,18 @@ export function CitizenForm({ citizen, serverSlug }: CitizenFormProps) {
 
   const createMutation = useMutation({
     mutationFn: async (data: CitizenSchemaType) => {
-      return resolveActionResult(createCitizen(data));
+      return resolveActionResult(createCitizenAction(data));
     },
     onError: (error) => {
       toast.error(error.message);
     },
     onSuccess: () => {
       toast.success("Citizen created successfully");
-      router.push(`/servers/${serverSlug}/citizens`);
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        router.push(`/servers/${serverSlug}/citizens`);
+      }
     },
   });
 
@@ -85,14 +92,18 @@ export function CitizenForm({ citizen, serverSlug }: CitizenFormProps) {
       if (!data.id) {
         throw new Error("Citizen ID is required for update");
       }
-      return resolveActionResult(updateCitizen({...data, id: data.id}));
+      return resolveActionResult(updateCitizenAction({...data, id: data.id}));
     },
     onError: (error) => {
       toast.error(error.message);
     },
     onSuccess: () => {
       toast.success("Citizen updated successfully");
-      router.push(`/servers/${serverSlug}/citizens`);
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        router.push(`/servers/${serverSlug}/citizens`);
+      }
     },
   });
 
@@ -111,8 +122,8 @@ export function CitizenForm({ citizen, serverSlug }: CitizenFormProps) {
 
   return (
     <Form form={form} onSubmit={onSubmit}>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Colonne 1: Infos personnelles */}
+      <div className="flex flex-col gap-6">
+        {/* Infos personnelles */}
         <div className="space-y-4">
           <div className="mb-6">
             <FormField
@@ -125,7 +136,7 @@ export function CitizenForm({ citizen, serverSlug }: CitizenFormProps) {
                     <ImageFormItem
                       className="size-32 mx-auto rounded-full"
                       onChange={(url) => field.onChange(url)}
-                      imageUrl={field.value ?? null}
+                      imageUrl={null}
                     />
                   </FormControl>
                   <FormMessage />
@@ -134,68 +145,82 @@ export function CitizenForm({ citizen, serverSlug }: CitizenFormProps) {
             />
           </div>
           
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="John" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="John" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="surname"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Surname</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Doe" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           
-          <FormField
-            control={form.control}
-            name="surname"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Surname</FormLabel>
-                <FormControl>
-                  <Input placeholder="Doe" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          
-          <FormField
-            control={form.control}
-            name="dateOfBirth"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Date of Birth</FormLabel>
-                <FormControl>
-                  <div className="flex w-full">
-                    <DatePicker
-                      date={field.value ? new Date(field.value) : undefined}
-                      onDateChange={field.onChange}
-                      placeholder="Select date of birth"
-                      className="w-full"
-                    />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="dateOfBirth"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Date of Birth</FormLabel>
+                  <FormControl>
+                    <div className="flex w-full">
+                      <DatePicker
+                        date={field.value ? new Date(field.value) : undefined}
+                        onDateChange={field.onChange}
+                        placeholder="Select date of birth"
+                        className="w-full"
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="socialSecurityNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Social Security Number</FormLabel>
+                  <div className="flex gap-2">
+                    <FormControl>
+                      <Input placeholder="XXX-XX-XXXX" {...field} />
+                    </FormControl>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={() => form.setValue("socialSecurityNumber", generateSSN())}
+                    >
+                      <Wand2 className="h-4 w-4" />
+                    </Button>
                   </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          
-          <FormField
-            control={form.control}
-            name="socialSecurityNumber"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Social Security Number</FormLabel>
-                <FormControl>
-                  <Input placeholder="XXX-XX-XXXX" {...field} value={field.value ?? ''} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           
           <div className="grid grid-cols-2 gap-4">
             <FormField
@@ -246,9 +271,9 @@ export function CitizenForm({ citizen, serverSlug }: CitizenFormProps) {
           </div>
         </div>
         
-        {/* Colonne 2: Attributs et contact */}
+        {/* Attributs et contact */}
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="gender"
@@ -306,7 +331,7 @@ export function CitizenForm({ citizen, serverSlug }: CitizenFormProps) {
             />
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="hairColor"
@@ -425,9 +450,9 @@ export function CitizenForm({ citizen, serverSlug }: CitizenFormProps) {
           />
         </div>
         
-        {/* Colonne 3: Licences et informations additionnelles */}
+        {/* Licences et informations additionnelles */}
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="driversLicense"
@@ -470,7 +495,7 @@ export function CitizenForm({ citizen, serverSlug }: CitizenFormProps) {
             />
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="pilotLicense"
@@ -513,7 +538,7 @@ export function CitizenForm({ citizen, serverSlug }: CitizenFormProps) {
             />
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="waterLicense"
@@ -556,7 +581,7 @@ export function CitizenForm({ citizen, serverSlug }: CitizenFormProps) {
             />
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="firearmsLicense"

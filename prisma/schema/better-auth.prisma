@@ -83,6 +83,10 @@ model Organization {
   Department  Department[]
   citizens    Citizen[]
 
+  // Relations
+
+  medicalRecords MedicalRecord[]
+
   @@unique([slug])
   @@map("organization")
 }

@@ -26,16 +26,6 @@ export async function GET() {
       },
     });
 
-    // Si l'utilisateur est owner ou admin, il a toutes les permissions
-    if (member?.role === "owner" || member?.role === "admin") {
-      // Renvoyer une liste de toutes les permissions possibles
-      // Note: ici nous devrions idéalement renvoyer la liste complète des permissions
-      // Pour simplifier, on renvoie seulement celles utilisées dans la navigation
-      return NextResponse.json({ 
-        permissions: ["EDIT_CITIZENS", "CREATE_CITIZENS", "ADMINISTRATOR"] 
-      });
-    }
-
     // Si l'utilisateur n'a pas de rôle personnalisé, retourner un tableau vide
     if (!member?.customRole?.permissions) {
       return NextResponse.json({ permissions: [] });

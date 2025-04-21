@@ -7,14 +7,13 @@ import {
   LayoutTitle,
   LayoutActions
 } from "@/features/page/layout";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import { getCitizensList } from "./citizens.action";
-import { CitizensTable } from "./citizens-table";
-import Link from "next/link";
+import { getCitizensList } from "./_actions/citizens.action";
+import { CitizensTable } from "./_components/citizens-table";
 import { getRequiredCurrentServerCache } from "@/lib/react/cache";
 import { createSearchParamsCache, parseAsInteger } from "nuqs/server";
 import { combineWithParentMetadata } from "@/lib/metadata";
+import { CreateCitizenModal } from "./_components/create-citizen-modal";
+import CheckPermission from "../permissions/check-permissions";
 
 // Ajouter des métadonnées à la page
 export const generateMetadata = combineWithParentMetadata({
@@ -45,12 +44,9 @@ export default async function CitizensPage({ searchParams }: PageParams) {
         </LayoutDescription>
       </LayoutHeader>
       <LayoutActions>
-        <Button asChild>
-          <Link href={`/servers/${server.slug}/citizens/create`}>
-            <Plus className="mr-2 h-4 w-4" />
-            Add Citizen
-          </Link>
-        </Button>
+        <CheckPermission permissions={["CREATE_CITIZEN"]}>
+        <CreateCitizenModal serverSlug={server.slug} />
+        </CheckPermission>
       </LayoutActions>
       <LayoutContent>
         <CitizensTable 

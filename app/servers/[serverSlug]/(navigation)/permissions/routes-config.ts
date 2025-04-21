@@ -29,8 +29,13 @@ export type SpecialPathAccessRule = {
 export const SPECIAL_PATH_RULES: SpecialPathAccessRule[] = [
   {
     segment: 'citizens',
-    permissions: ["EDIT_CITIZENS", "CREATE_CITIZENS"],
+    permissions: ["CREATE_CITIZEN", "READ_CITIZEN", "EDIT_CITIZEN", "DELETE_CITIZEN"],
     logMessage: "Access denied to citizens section"
+  },
+  {
+    segment: 'citizens/ems',
+    permissions: ["CREATE_EMS", "READ_EMS", "EDIT_EMS", "DELETE_EMS"],
+    logMessage: "Access denied to ems section"
   },
   {
     segment: 'settings',
@@ -56,6 +61,11 @@ export const ENTITY_PATH_RULES: EntityPathRule[] = [
     segment: 'citizens',
     readPermission: 'READ_CITIZEN',
     entityName: 'citizen',
+  },
+  {
+    segment: 'ems',
+    readPermission: 'READ_EMS',
+    entityName: 'ems',
   },
   {
     segment: 'guilds',
@@ -85,7 +95,7 @@ export const SERVER_LINKS: NavigationGroup[] = [
         href: `${SERVER_PATH}/citizens`,
         Icon: Users,
         label: "Citizens",
-        permissions: ["EDIT_CITIZENS", "CREATE_CITIZENS"],
+        permissions: ["CREATE_CITIZEN", "READ_CITIZEN", "EDIT_CITIZEN", "DELETE_CITIZEN"],
         roles: ["admin", "owner"],
       },
       {

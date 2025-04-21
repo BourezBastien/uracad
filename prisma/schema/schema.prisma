@@ -93,8 +93,51 @@ model Citizen {
   organizationId String
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   
+  medicalRecords MedicalRecord[]
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([organizationId])
 }
+
+model MedicalRecord {
+  id          String    @id @default(cuid())
+  citizenId   String
+  citizen     Citizen   @relation(fields: [citizenId], references: [id], onDelete: Cascade)
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  // Type de dossier médical
+  type        String    // CARE, INJURY, TRAUMA, PSYCHOLOGY, DEATH
+  
+  // Informations générales
+  title       String
+  description String
+  location    String?   // Lieu des soins/incident
+  
+  // Détails médicaux
+  diagnosis   String?
+  treatment   String?
+  prescription String?
+  
+  // Détails spécifiques selon le type
+  injuryDetails     String?  // Détails des blessures
+  traumaDetails     String?  // Détails des traumatismes
+  psychologyNotes   String?  // Notes psychologiques
+  deathCause        String?  // Cause du décès
+  autopsyReport     String?  // Rapport d'autopsie
+  
+  // Restrictions et confidentialité
+  isConfidential    Boolean @default(false)  // Données sensibles
+  isPoliceVisible   Boolean @default(false)  // Visibilité police
+  restrictedAccess  Boolean @default(false)  // Accès restreint
+  
+  // Métadonnées
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([citizenId])
+  @@index([organizationId])
+}
+

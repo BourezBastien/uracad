@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -19,9 +19,8 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import type { Citizen } from "@prisma/client";
-import { Edit, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import Link from "next/link";
-import { deleteCitizen } from "./citizens.action";
 import { useMutation } from "@tanstack/react-query";
 import { resolveActionResult } from "@/lib/actions/actions-utils";
 import { toast } from "sonner";
@@ -30,6 +29,9 @@ import { useState } from "react";
 import { format } from "date-fns";
 import { dialogManager } from "@/features/dialog-manager/dialog-manager-store";
 import { useQueryState, parseAsInteger } from "nuqs";
+import { deleteCitizenAction } from "../_actions/citizens.action";
+import { EditCitizenModal } from "./edit-citizen-modal";
+import CheckPermission from "../../permissions/check-permissions";
 
 type PaginationInfo = {
   page: number;
@@ -44,6 +46,17 @@ type CitizensTableProps = {
   pagination: PaginationInfo;
 };
 
+function ActionsCheck({ children }: { children: React.ReactNode }) {
+  return (
+    <CheckPermission 
+      permissions={["EDIT_CITIZEN", "DELETE_CITIZEN"]} 
+      mode="OR"
+    >
+      {children}
+    </CheckPermission>
+  );
+}
+
 export function CitizensTable({ citizens, serverSlug, pagination }: CitizensTableProps) {
   const router = useRouter();
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -57,7 +70,7 @@ export function CitizensTable({ citizens, serverSlug, pagination }: CitizensTabl
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       setDeletingId(id);
-      return resolveActionResult(deleteCitizen({ id }));
+      return resolveActionResult(deleteCitizenAction({ id }));
     },
     onError: (error) => {
       toast.error(error.message);
@@ -139,7 +152,9 @@ export function CitizensTable({ citizens, serverSlug, pagination }: CitizensTabl
               <TableHead>Pilot</TableHead>
               <TableHead>Firearm</TableHead>
               <TableHead>Phone</TableHead>
-              <TableHead>Actions</TableHead>
+              <ActionsCheck>
+                <TableHead className="w-[100px]">Actions</TableHead>
+              </ActionsCheck>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -161,7 +176,9 @@ export function CitizensTable({ citizens, serverSlug, pagination }: CitizensTabl
                   )}
                 </TableCell>
                 <TableCell className="font-medium">
-                  {citizen.name} {citizen.surname}
+                  <Link className={buttonVariants({ variant: "link" })} href={`/servers/${serverSlug}/citizens/${citizen.id}`}>
+                    {citizen.name} {citizen.surname}
+                  </Link>
                 </TableCell>
                 <TableCell>{format(new Date(citizen.dateOfBirth), "dd/MM/yyyy")}</TableCell>
                 <TableCell>
@@ -192,25 +209,37 @@ export function CitizensTable({ citizens, serverSlug, pagination }: CitizensTabl
                   )}
                 </TableCell>
                 <TableCell>{citizen.phone ?? "-"}</TableCell>
-                <TableCell className="w-24">
-                  <div className="flex space-x-2">
-                    <Button variant="ghost" size="icon" asChild>
-                      <Link href={`/servers/${serverSlug}/citizens/${citizen.id}`}>
-                        <Edit className="h-4 w-4" />
-                      </Link>
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="icon"
-                      disabled={deletingId === citizen.id}
-                      onClick={() => handleDelete(citizen.id, citizen.name, citizen.surname)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </TableCell>
+                <ActionsCheck>
+                  <TableCell className="w-24">
+                    <div className="flex space-x-2">
+                      <CheckPermission permissions={["EDIT_CITIZEN"]}>
+                        <EditCitizenModal citizen={citizen} />
+                      </CheckPermission>
+                      <CheckPermission permissions={["DELETE_CITIZEN"]}>
+                        <Button 
+                          variant="ghost" 
+                          size="icon"
+                          disabled={deletingId === citizen.id}
+                          onClick={() => handleDelete(citizen.id, citizen.name, citizen.surname)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </CheckPermission>
+                    </div>
+                  </TableCell>
+                </ActionsCheck>
               </TableRow>
             ))}
+            {citizens.length === 0 && (
+              <TableRow>
+                <TableCell 
+                  colSpan={8} 
+                  className="text-center text-muted-foreground"
+                >
+                  No citizens found. Create your first citizen to get started.
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>

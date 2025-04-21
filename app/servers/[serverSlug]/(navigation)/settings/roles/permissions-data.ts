@@ -13,6 +13,7 @@ export type Permission = {
 export type PermissionCategory = {
   id: string;
   name: string;
+  description?: string;
   permissions: Permission[];
 };
 
@@ -42,12 +43,17 @@ export const permissionDescriptions: Record<string, string> = {
   DEAFEN_MEMBERS: "Permet aux membres de rendre sourd d'autres membres dans les salons vocaux.",
   MOVE_MEMBERS: "Permet aux membres de déplacer d'autres membres entre les salons vocaux.",
   
-  // Citoyen
-  CREATE_CITIZENS: "Permet aux membres de créer des profils de citoyens.",
-  EDIT_CITIZENS: "Permet aux membres de modifier les informations des citoyens existants.",
-  REGISTER_VEHICLES: "Permet aux membres d'enregistrer des véhicules.",
-  REGISTER_WEAPONS: "Permet aux membres d'enregistrer des armes.",
-  CREATE_COMPANIES: "Permet aux membres de créer des entreprises.",
+  // Citizens
+  CREATE_CITIZEN: "Permet aux membres de créer des profils de citoyens.",
+  READ_CITIZEN: "Permet aux membres de voir les profils des citoyens.",
+  EDIT_CITIZEN: "Permet aux membres de modifier les informations des citoyens existants.",
+  DELETE_CITIZEN: "Permet aux membres de supprimer des citoyens.",
+  
+  // EMS
+  CREATE_EMS: "Permet aux membres de créer des dossiers médicaux.",
+  READ_EMS: "Permet aux membres de voir les dossiers médicaux.",
+  EDIT_EMS: "Permet aux membres de modifier les dossiers médicaux.",
+  DELETE_EMS: "Permet aux membres de supprimer des dossiers médicaux.",
   
   // Avancé
   ADMINISTRATOR: "Les membres avec cette permission ont tous les droits et ignorent les permissions spécifiques à chaque salon.",
@@ -107,12 +113,74 @@ export const permissionCategories: PermissionCategory[] = [
   },
   {
     id: "ems",
-    name: "EMS/FD",
+    name: "EMS",
+    description: "Permissions pour le système médical",
     permissions: [
-      { id: "VIEW_EMS", name: "Voir EMS/FD" },
-      { id: "MANAGE_EMS", name: "Gérer EMS/FD" },
-      { id: "CREATE_MEDICAL_RECORDS", name: "Créer des dossiers médicaux" },
-      { id: "DECLARE_DEAD", name: "Déclarer un décès" },
+      {
+        id: "READ_EMS",
+        name: "Rechercher patient",
+        description: "Permet de rechercher un patient dans le système EMS",
+      },
+      {
+        id: "CREATE_EMS",
+        name: "Créer fiche médicale",
+        description: "Permet de créer une nouvelle fiche médicale",
+      },
+      {
+        id: "EDIT_EMS",
+        name: "Modifier ses propres fiches",
+        description: "Permet de modifier ses propres fiches médicales",
+      },
+      {
+        id: "UPDATE_OTHERS_RECORDS",
+        name: "Modifier fiches des autres",
+        description: "Permet de modifier les fiches médicales créées par d'autres membres",
+      },
+      {
+        id: "DELETE_RECORD",
+        name: "Supprimer fiche médicale",
+        description: "Permet de supprimer une fiche médicale",
+      },
+      {
+        id: "DECLARE_DEATH",
+        name: "Déclarer un décès RP",
+        description: "Permet de déclarer un décès dans le système",
+      },
+      {
+        id: "MARK_CONFIDENTIAL",
+        name: "Marquer confidentiel",
+        description: "Permet de marquer une fiche comme confidentielle",
+      },
+      {
+        id: "VIEW_CONFIDENTIAL",
+        name: "Voir fiches confidentielles",
+        description: "Permet de voir les fiches marquées comme confidentielles",
+      },
+      {
+        id: "RESTRICT_ACCESS",
+        name: "Restreindre l'accès",
+        description: "Permet de restreindre l'accès à certaines fiches médicales",
+      },
+      {
+        id: "AUTHORIZE_POLICE",
+        name: "Autoriser visibilité police",
+        description: "Permet d'autoriser la visibilité d'une fiche à la police",
+      },
+      {
+        id: "VIEW_RESTRICTED",
+        name: "Voir fiches restreintes",
+        description: "Permet de voir les fiches à accès restreint",
+      },
+      {
+        id: "VIEW_LOGS",
+        name: "Accès logs dossier médical",
+        description: "Permet d'accéder aux logs des dossiers médicaux",
+      },
+      {
+        id: "MANAGE_ACCESS",
+        name: "Gérer accès EMS / rôles",
+        description: "Permet de gérer les accès et les rôles EMS",
+      },
     ],
   },
   {
@@ -130,11 +198,10 @@ export const permissionCategories: PermissionCategory[] = [
     id: "citizen",
     name: "Citoyen",
     permissions: [
-      { id: "CREATE_CITIZENS", name: "Créer des citoyens" },
-      { id: "EDIT_CITIZENS", name: "Modifier des citoyens" },
-      { id: "REGISTER_VEHICLES", name: "Enregistrer des véhicules" },
-      { id: "REGISTER_WEAPONS", name: "Enregistrer des armes" },
-      { id: "CREATE_COMPANIES", name: "Créer des entreprises" },
+      { id: "CREATE_CITIZEN", name: "Créer des citoyens" },
+      { id: "READ_CITIZEN", name: "Voir les citoyens" },
+      { id: "EDIT_CITIZEN", name: "Modifier des citoyens" },
+      { id: "DELETE_CITIZEN", name: "Supprimer des citoyens" },
     ],
   },
 ];
@@ -187,4 +254,25 @@ export const availablePermissionCategories: PermissionCategory[] = [
       { id: "MANAGE_EMOJIS", name: "Manage Emojis" }
     ]
   }
+];
+
+export const PERMISSIONS_GROUPS = [
+  {
+    name: "Citizens",
+    permissions: [
+      { id: "CREATE_CITIZEN", name: "Créer des citoyens" },
+      { id: "READ_CITIZEN", name: "Voir les citoyens" },
+      { id: "EDIT_CITIZEN", name: "Modifier des citoyens" },
+      { id: "DELETE_CITIZEN", name: "Supprimer des citoyens" },
+    ],
+  },
+  {
+    name: "EMS",
+    permissions: [
+      { id: "CREATE_EMS", name: "Créer des dossiers médicaux" },
+      { id: "READ_EMS", name: "Voir les dossiers médicaux" },
+      { id: "EDIT_EMS", name: "Modifier les dossiers médicaux" },
+      { id: "DELETE_EMS", name: "Supprimer des dossiers médicaux" },
+    ],
+  },
 ]; 
