@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Type définissant la structure d'une permission
  */
@@ -18,168 +20,123 @@ export type PermissionCategory = {
 };
 
 /**
- * Descriptions des permissions pour aider les utilisateurs
- */
-export const permissionDescriptions: Record<string, string> = {
-  // Général
-  VIEW_SERVER: "Permet aux membres de voir le serveur par défaut (à l'exception des salons privés).",
-  MANAGE_SERVER: "Permet aux membres de créer, modifier ou supprimer des salons.",
-  MANAGE_ROLES: "Permet aux membres de créer de nouveaux rôles et de modifier ou de supprimer des rôles inférieurs à leur rôle le plus élevé.",
-  MANAGE_CHANNELS: "Permet aux membres de changer les permissions des salons individuels auxquels ils ont accès.",
-  
-  // Messages
-  SEND_MESSAGES: "Permet aux membres d'envoyer des messages dans les salons textuels.",
-  READ_MESSAGES: "Permet aux membres de lire les messages dans les salons textuels.",
-  MANAGE_MESSAGES: "Permet aux membres de supprimer des messages d'autres membres.",
-  EMBED_LINKS: "Permet aux membres d'intégrer des liens dans leurs messages.",
-  ATTACH_FILES: "Permet aux membres de joindre des fichiers à leurs messages.",
-  MENTION_EVERYONE: "Permet aux membres de mentionner @everyone et @here.",
-  
-  // Voix
-  CONNECT: "Permet aux membres de se connecter aux salons vocaux.",
-  SPEAK: "Permet aux membres de parler dans les salons vocaux.",
-  VIDEO: "Permet aux membres d'activer leur caméra dans les salons vocaux.",
-  MUTE_MEMBERS: "Permet aux membres de rendre muet d'autres membres dans les salons vocaux.",
-  DEAFEN_MEMBERS: "Permet aux membres de rendre sourd d'autres membres dans les salons vocaux.",
-  MOVE_MEMBERS: "Permet aux membres de déplacer d'autres membres entre les salons vocaux.",
-  
-  // Citizens
-  CREATE_CITIZEN: "Permet aux membres de créer des profils de citoyens.",
-  READ_CITIZEN: "Permet aux membres de voir les profils des citoyens.",
-  EDIT_CITIZEN: "Permet aux membres de modifier les informations des citoyens existants.",
-  DELETE_CITIZEN: "Permet aux membres de supprimer des citoyens.",
-  
-  // EMS
-  CREATE_EMS: "Permet aux membres de créer des dossiers médicaux.",
-  READ_EMS: "Permet aux membres de voir les dossiers médicaux.",
-  EDIT_EMS: "Permet aux membres de modifier les dossiers médicaux.",
-  DELETE_EMS: "Permet aux membres de supprimer des dossiers médicaux.",
-  
-  // Avancé
-  ADMINISTRATOR: "Les membres avec cette permission ont tous les droits et ignorent les permissions spécifiques à chaque salon.",
-  VIEW_AUDIT_LOG: "Permet aux membres de voir un récapitulatif des personnes ayant effectué différentes actions sur le serveur.",
-  MANAGE_WEBHOOKS: "Permet aux membres de créer, modifier et supprimer des webhooks.",
-  MANAGE_EMOJIS: "Permet aux membres d'ajouter, de modifier ou de supprimer des émojis, autocollants et sons personnalisés.",
-};
-
-/**
  * Obtenir la description d'une permission
  * @param permissionId ID de la permission
  * @returns Description de la permission ou message par défaut
  */
-export function getPermissionDescription(permissionId: string): string {
-  return permissionDescriptions[permissionId] || 
-    "Permet aux membres d'utiliser cette fonctionnalité sur le serveur.";
+export function getPermissionDescription(permissionId: string, t?: (key: string) => string): string {
+  try {
+    return t?.(`description.${permissionId}`) ?? t?.("description.DEFAULT") ?? "Allows using this feature on the server.";
+  } catch (error) {
+    logger.error(error);
+    return "Allows using this feature on the server.";
+  }
 }
 
 /**
  * Catégories de permissions.
  * Définit les groupes de permissions et leurs options
+ * Note: These names are now translated at runtime where they're used
  */
 export const permissionCategories: PermissionCategory[] = [
   {
-    id: "general",
-    name: "Général",
-    permissions: [
-      { id: "VIEW_DASHBOARD", name: "Voir le tableau de bord" },
-      { id: "MANAGE_SERVER", name: "Gérer le serveur" },
-      { id: "MANAGE_ROLES", name: "Gérer les rôles" },
-      { id: "VIEW_AUDIT_LOG", name: "Voir les logs d'audit" },
-    ],
-  },
-  {
     id: "members",
-    name: "Membres",
+    name: "Members",
     permissions: [
-      { id: "VIEW_MEMBERS", name: "Voir les membres" },
-      { id: "MANAGE_MEMBERS", name: "Gérer les membres" },
-      { id: "KICK_MEMBERS", name: "Expulser des membres" },
-      { id: "BAN_MEMBERS", name: "Bannir des membres" },
+      { id: "VIEW_MEMBERS", name: "View Members" },
+      { id: "MANAGE_MEMBERS", name: "Manage Members" },
+      { id: "KICK_MEMBERS", name: "Kick Members" },
+      { id: "BAN_MEMBERS", name: "Ban Members" },
     ],
   },
   {
     id: "leo",
     name: "LEO",
     permissions: [
-      { id: "VIEW_LEO", name: "Voir les officiers" },
-      { id: "MANAGE_LEO", name: "Gérer les officiers" },
-      { id: "CREATE_ARREST_REPORTS", name: "Créer des rapports d'arrestation" },
-      { id: "CREATE_BOLOS", name: "Créer des avis de recherche" },
-      { id: "NAME_SEARCH", name: "Rechercher des noms" },
-      { id: "PLATE_SEARCH", name: "Rechercher des plaques" },
-      { id: "WEAPON_SEARCH", name: "Rechercher des armes" },
-      { id: "MANAGE_WARRANTS", name: "Gérer les mandats" },
+      { id: "VIEW_LEO", name: "View Officers" },
+      { id: "MANAGE_LEO", name: "Manage Officers" },
+      { id: "CREATE_ARREST_REPORTS", name: "Create Arrest Reports" },
+      { id: "CREATE_BOLOS", name: "Create BOLOs" },
+      { id: "NAME_SEARCH", name: "Name Search" },
+      { id: "PLATE_SEARCH", name: "Plate Search" },
+      { id: "WEAPON_SEARCH", name: "Weapon Search" },
+      { id: "MANAGE_WARRANTS", name: "Manage Warrants" },
+      { id: "CREATE_FINE", name: "Create Fine" },
+      { id: "VIEW_FINE", name: "View Fines" },
+      { id: "EDIT_FINE", name: "Edit Fines" },
+      { id: "DELETE_FINE", name: "Delete Fines" },
+      { id: "MANAGE_PENAL_CODE", name: "Manage Penal Code" },
     ],
   },
   {
     id: "ems",
     name: "EMS",
-    description: "Permissions pour le système médical",
+    description: "Permissions for the medical system",
     permissions: [
       {
         id: "READ_EMS",
-        name: "Rechercher patient",
-        description: "Permet de rechercher un patient dans le système EMS",
+        name: "Search Patient",
+        description: "Allows searching for a patient in the EMS system",
       },
       {
         id: "CREATE_EMS",
-        name: "Créer fiche médicale",
-        description: "Permet de créer une nouvelle fiche médicale",
+        name: "Create Medical Record",
+        description: "Allows creating a new medical record",
       },
       {
         id: "EDIT_EMS",
-        name: "Modifier ses propres fiches",
-        description: "Permet de modifier ses propres fiches médicales",
+        name: "Edit Own Records",
+        description: "Allows editing their own medical records",
       },
       {
         id: "UPDATE_OTHERS_RECORDS",
-        name: "Modifier fiches des autres",
-        description: "Permet de modifier les fiches médicales créées par d'autres membres",
+        name: "Edit Others' Records",
+        description: "Allows editing medical records created by other members",
       },
       {
         id: "DELETE_RECORD",
-        name: "Supprimer fiche médicale",
-        description: "Permet de supprimer une fiche médicale",
+        name: "Delete Medical Record",
+        description: "Allows deleting a medical record",
       },
       {
         id: "DECLARE_DEATH",
-        name: "Déclarer un décès RP",
-        description: "Permet de déclarer un décès dans le système",
+        name: "Declare RP Death",
+        description: "Allows declaring a death in the system",
       },
       {
         id: "MARK_CONFIDENTIAL",
-        name: "Marquer confidentiel",
-        description: "Permet de marquer une fiche comme confidentielle",
+        name: "Mark Confidential",
+        description: "Allows marking a record as confidential",
       },
       {
         id: "VIEW_CONFIDENTIAL",
-        name: "Voir fiches confidentielles",
-        description: "Permet de voir les fiches marquées comme confidentielles",
+        name: "View Confidential",
+        description: "Allows viewing records marked as confidential",
       },
       {
         id: "RESTRICT_ACCESS",
-        name: "Restreindre l'accès",
-        description: "Permet de restreindre l'accès à certaines fiches médicales",
+        name: "Restrict Access",
+        description: "Allows restricting access to certain medical records",
       },
       {
         id: "AUTHORIZE_POLICE",
-        name: "Autoriser visibilité police",
-        description: "Permet d'autoriser la visibilité d'une fiche à la police",
+        name: "Authorize Police",
+        description: "Allows authorizing police visibility for a record",
       },
       {
         id: "VIEW_RESTRICTED",
-        name: "Voir fiches restreintes",
-        description: "Permet de voir les fiches à accès restreint",
+        name: "View Restricted",
+        description: "Allows viewing restricted access records",
       },
       {
         id: "VIEW_LOGS",
-        name: "Accès logs dossier médical",
-        description: "Permet d'accéder aux logs des dossiers médicaux",
+        name: "Access Medical Logs",
+        description: "Allows accessing medical record logs",
       },
       {
         id: "MANAGE_ACCESS",
-        name: "Gérer accès EMS / rôles",
-        description: "Permet de gérer les accès et les rôles EMS",
+        name: "Manage EMS Access",
+        description: "Allows managing EMS access and roles",
       },
     ],
   },
@@ -187,21 +144,25 @@ export const permissionCategories: PermissionCategory[] = [
     id: "dispatch",
     name: "Dispatch",
     permissions: [
-      { id: "VIEW_DISPATCH", name: "Voir la répartition" },
-      { id: "MANAGE_DISPATCH", name: "Gérer la répartition" },
-      { id: "MANAGE_CALLS", name: "Gérer les appels" },
-      { id: "UPDATE_AOP", name: "Mettre à jour l'AOP" },
-      { id: "USE_SIGNAL100", name: "Utiliser Signal 100" },
+      { id: "VIEW_DISPATCH", name: "View Dispatch" },
+      { id: "MANAGE_DISPATCH", name: "Manage Dispatch" },
+      { id: "MANAGE_CALLS", name: "Manage Calls" },
+      { id: "UPDATE_AOP", name: "Update AOP" },
+      { id: "USE_SIGNAL100", name: "Use Signal 100" },
     ],
   },
   {
     id: "citizen",
-    name: "Citoyen",
+    name: "Citizen",
     permissions: [
-      { id: "CREATE_CITIZEN", name: "Créer des citoyens" },
-      { id: "READ_CITIZEN", name: "Voir les citoyens" },
-      { id: "EDIT_CITIZEN", name: "Modifier des citoyens" },
-      { id: "DELETE_CITIZEN", name: "Supprimer des citoyens" },
+      { id: "CREATE_CITIZEN", name: "Create Citizens" },
+      { id: "READ_CITIZEN", name: "View Citizens" },
+      { id: "EDIT_CITIZEN", name: "Edit Citizens" },
+      { id: "DELETE_CITIZEN", name: "Delete Citizens" },
+      { id: "CREATE_VEHICLE", name: "Create Vehicles" },
+      { id: "VIEW_VEHICLE", name: "View Vehicles" },
+      { id: "EDIT_VEHICLE", name: "Edit Vehicles" },
+      { id: "DELETE_VEHICLE", name: "Delete Vehicles" },
     ],
   },
 ];
@@ -248,6 +209,7 @@ export const availablePermissionCategories: PermissionCategory[] = [
     id: "advanced",
     name: "Advanced",
     permissions: [
+      { id: "OWNER", name: "Owner" },
       { id: "ADMINISTRATOR", name: "Administrator" },
       { id: "VIEW_AUDIT_LOG", name: "View Audit Log" },
       { id: "MANAGE_WEBHOOKS", name: "Manage Webhooks" },
@@ -260,19 +222,28 @@ export const PERMISSIONS_GROUPS = [
   {
     name: "Citizens",
     permissions: [
-      { id: "CREATE_CITIZEN", name: "Créer des citoyens" },
-      { id: "READ_CITIZEN", name: "Voir les citoyens" },
-      { id: "EDIT_CITIZEN", name: "Modifier des citoyens" },
-      { id: "DELETE_CITIZEN", name: "Supprimer des citoyens" },
+      { id: "CREATE_CITIZEN", name: "Create Citizens" },
+      { id: "READ_CITIZEN", name: "View Citizens" },
+      { id: "EDIT_CITIZEN", name: "Edit Citizens" },
+      { id: "DELETE_CITIZEN", name: "Delete Citizens" },
     ],
   },
   {
     name: "EMS",
     permissions: [
-      { id: "CREATE_EMS", name: "Créer des dossiers médicaux" },
-      { id: "READ_EMS", name: "Voir les dossiers médicaux" },
-      { id: "EDIT_EMS", name: "Modifier les dossiers médicaux" },
-      { id: "DELETE_EMS", name: "Supprimer des dossiers médicaux" },
+      { id: "CREATE_EMS", name: "Create Medical Records" },
+      { id: "READ_EMS", name: "View Medical Records" },
+      { id: "EDIT_EMS", name: "Edit Medical Records" },
+      { id: "DELETE_EMS", name: "Delete Medical Records" },
+    ],
+  },
+  {
+    name: "Vehicles",
+    permissions: [
+      { id: "CREATE_VEHICLE", name: "Create Vehicles" },
+      { id: "VIEW_VEHICLE", name: "View Vehicles" },
+      { id: "EDIT_VEHICLE", name: "Edit Vehicles" },
+      { id: "DELETE_VEHICLE", name: "Delete Vehicles" },
     ],
   },
 ]; 

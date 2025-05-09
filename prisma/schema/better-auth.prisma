@@ -82,6 +82,9 @@ model Organization {
   email       String?
   Department  Department[]
   citizens    Citizen[]
+  vehicles    Vehicle[]
+  fines       Fine[]
+  penalCodes  PenalCode[]
 
   // Relations
 

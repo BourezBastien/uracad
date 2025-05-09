@@ -10,6 +10,7 @@ import { useMutation } from "@tanstack/react-query";
 import { resolveActionResult } from "@/lib/actions/actions-utils";
 import { createMedicalRecordAction } from "./create-medical-record.action";
 import { MedicalRecordForm } from "../ems/records/medical-record-form";
+import { useTranslations } from "next-intl";
 
 type Citizen = {
   id: string;
@@ -18,6 +19,7 @@ type Citizen = {
 };
 
 export function CreateMedicalRecordForm({ citizen }: { citizen: Citizen }) {
+  const t = useTranslations("EMS");
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
@@ -31,7 +33,7 @@ export function CreateMedicalRecordForm({ citizen }: { citizen: Citizen }) {
       );
     },
     onSuccess: () => {
-      toast.success("Medical record created successfully");
+      toast.success(t("form.recordCreated"));
       setOpen(false);
       router.refresh();
     },
@@ -44,13 +46,13 @@ export function CreateMedicalRecordForm({ citizen }: { citizen: Citizen }) {
     <>
       <Button onClick={() => setOpen(true)}>
         <Plus className="mr-2 h-4 w-4" />
-        Add Medical Record
+        {t("form.addMedicalRecord")}
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>New Medical Record</DialogTitle>
+            <DialogTitle>{t("form.newRecord")}</DialogTitle>
           </DialogHeader>
           <MedicalRecordForm
             onSubmit={async (data) => mutation.mutate(data)}

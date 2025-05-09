@@ -5,6 +5,7 @@ import { getRequiredUser } from "../auth/auth-user";
 import { logger } from "../logger";
 import { getRequiredCurrentServer } from "../servers/get-server";
 
+
 export class ActionError extends Error {}
 
 type handleServerError = (e: Error) => string;
@@ -40,6 +41,11 @@ export const authAction = createSafeActionClient({
   });
 });
 
+// Define a simpler type for the server action
+type ServerActionType = typeof serverAction & {
+  permission: (permission: string | string[]) => typeof serverAction;
+};
+
 export const serverAction = createSafeActionClient({
   handleServerError,
   defineMetadataSchema() {
@@ -47,6 +53,11 @@ export const serverAction = createSafeActionClient({
       .object({
         roles: z.array(z.enum(RolesKeys)).optional(),
         permissions: AuthPermissionSchema.optional(),
+        // Support for custom permissions system
+        customPermissions: z.union([
+          z.string(),
+          z.array(z.string())
+        ]).optional(),
       })
       .optional();
   },
@@ -62,3 +73,10 @@ export const serverAction = createSafeActionClient({
     );
   }
 });
+
+// Add a permission method to serverAction for easier permission handling
+(serverAction as ServerActionType).permission = function(permission: string | string[]) {
+  return this.metadata({ 
+    customPermissions: permission 
+  });
+};

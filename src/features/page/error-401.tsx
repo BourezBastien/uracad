@@ -8,20 +8,22 @@ import {
 import type { PropsWithChildren } from "react";
 import { Typography } from "../../components/uracad/typography";
 import { ContactSupportDialog } from "../contact/support/contact-support-dialog";
+import { useTranslations } from "next-intl";
 
 type Error401Props = PropsWithChildren<{
   title?: string;
 }>;
 
 export function Error401(props: Error401Props) {
+  const t = useTranslations("Errors.401");
+  
   return (
     <Card className="w-full">
       <CardHeader className="flex flex-col">
-        <Typography variant="code">401</Typography>
-        <CardTitle>{props.title ?? "Unauthorized"}</CardTitle>
+        <Typography variant="code">{t("code")}</Typography>
+        <CardTitle>{props.title ?? t("title")}</CardTitle>
         <CardDescription>
-          You don't have permission to access this resource. Please sign in or
-          contact your administrator if you believe this is a mistake.
+          {t("description")}
         </CardDescription>
       </CardHeader>
       <CardFooter className="flex flex-row gap-2">

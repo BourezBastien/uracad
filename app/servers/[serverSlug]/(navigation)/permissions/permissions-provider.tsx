@@ -26,7 +26,7 @@ function checkPermission(
   mode: "AND" | "OR" = "OR"
 ): boolean {
   // Si l'utilisateur est owner ou admin, il peut tout faire
-  if (roles.includes("owner") || roles.includes("admin")) {
+  if (roles.includes("OWNER") || roles.includes("ADMIN")) {
     return true;
   }
   
