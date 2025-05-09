@@ -4,8 +4,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, X, CheckSquare, CheckIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { getPermissionDescription, permissionCategories } from "../permissions-data";
 
-import { permissionCategories, getPermissionDescription } from "../permissions-data";
 
 type PermissionListProps = {
   selectedPermissions: Record<string, boolean>;
@@ -17,6 +18,7 @@ export function PermissionList({
   onChange, 
 }: PermissionListProps) {
   const [searchTerm, setSearchTerm] = useState("");
+  const t = useTranslations("Permissions");
   
   // Check if all permissions are selected
   const areAllPermissionsSelected = () => {
@@ -55,48 +57,49 @@ export function PermissionList({
     permissions: category.permissions.filter(permission => 
       searchTerm.trim() === "" || 
       permission.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      getPermissionDescription(permission.id).toLowerCase().includes(searchTerm.toLowerCase())
+      getPermissionDescription(permission.id, t).toLowerCase().includes(searchTerm.toLowerCase())
     )
   })).filter(category => category.permissions.length > 0);
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-2">
-        <div className="relative mb-2">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input 
-            className="pl-10 bg-muted/50"
-            placeholder="Rechercher des permissions"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-        <div className="flex gap-4 justify-end">
-          <Button 
-            variant="outline" 
-            size="sm"
-            className="text-xs flex items-center gap-1 h-7"
-            onClick={handleToggleAll}
+    <div className="space-y-4">
+      <div className="relative">
+        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+        <Input
+          type="search"
+          placeholder="Search permissions..."
+          className="w-full bg-background pl-8 focus-visible:ring-0 border-muted"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        {searchTerm && (
+          <button
+            type="button"
+            className="absolute right-0 top-0 h-full px-3"
+            onClick={() => setSearchTerm('')}
           >
-            {areAllPermissionsSelected() ? (
-              <>
-                <X className="h-3.5 w-3.5" />
-                Tout décocher
-              </>
-            ) : (
-              <>
-                <CheckSquare className="h-3.5 w-3.5" />
-                Tout cocher
-              </>
-            )}
-          </Button>
-        </div>
+            <X className="h-4 w-4 text-muted-foreground" />
+            <span className="sr-only">Clear</span>
+          </button>
+        )}
       </div>
+      
+      {/* Toggle all button */}
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        className="flex items-center"
+        onClick={handleToggleAll}
+      >
+        <CheckSquare className="mr-2 h-4 w-4" />
+        {areAllPermissionsSelected() ? 'Unselect All' : 'Select All'}
+      </Button>
       
       {filteredCategories.map(category => (
         <div key={category.id} className="space-y-1">
           <h3 className="text-base font-semibold mb-2">
-            {category.name}
+            {t.has(`categories.${category.id}`) ? t(`categories.${category.id}`) : category.name}
           </h3>
           
           <div className="space-y-0">
@@ -110,9 +113,11 @@ export function PermissionList({
                 }}
               >
                 <div className="space-y-1 flex-1 pr-4">
-                  <p className="text-sm font-medium">{permission.name}</p>
+                  <p className="text-sm font-medium">
+                    {t.has(`names.${permission.id}`) ? t(`names.${permission.id}`) : permission.name}
+                  </p>
                   <p className="text-xs text-muted-foreground">
-                    {getPermissionDescription(permission.id)}
+                    {getPermissionDescription(permission.id, t)}
                   </p>
                 </div>
                 

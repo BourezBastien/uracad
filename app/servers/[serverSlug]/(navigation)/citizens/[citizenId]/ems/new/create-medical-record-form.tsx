@@ -30,6 +30,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { LoadingButton } from "@/features/form/submit-button";
+import { useTranslations } from "next-intl";
 
 const Schema = z.object({
   type: z.enum(["CARE", "INJURY", "TRAUMA", "PSYCHOLOGY", "DEATH"]),
@@ -47,6 +48,8 @@ type Citizen = {
 };
 
 function MedicalRecordForm({ citizen, onSuccess }: { citizen: Citizen; onSuccess?: () => void }) {
+  const t = useTranslations("EMS");
+  const tCommon = useTranslations("Common");
   const router = useRouter();
   const form = useZodForm({
     schema: Schema,
@@ -67,7 +70,7 @@ function MedicalRecordForm({ citizen, onSuccess }: { citizen: Citizen; onSuccess
       );
     },
     onSuccess: () => {
-      toast.success("Medical record created successfully");
+      toast.success(t("form.recordCreated"));
       router.refresh();
       onSuccess?.();
     },
@@ -84,19 +87,19 @@ function MedicalRecordForm({ citizen, onSuccess }: { citizen: Citizen; onSuccess
           name="type"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Type</FormLabel>
+              <FormLabel>{t("details.type")}</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select type" />
+                    <SelectValue placeholder={t("form.selectType")} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="CARE">Care</SelectItem>
-                  <SelectItem value="INJURY">Injury</SelectItem>
-                  <SelectItem value="TRAUMA">Trauma</SelectItem>
-                  <SelectItem value="PSYCHOLOGY">Psychology</SelectItem>
-                  <SelectItem value="DEATH">Death</SelectItem>
+                  <SelectItem value="CARE">{t("recordType.care")}</SelectItem>
+                  <SelectItem value="INJURY">{t("recordType.injury")}</SelectItem>
+                  <SelectItem value="TRAUMA">{t("recordType.trauma")}</SelectItem>
+                  <SelectItem value="PSYCHOLOGY">{t("recordType.psychology")}</SelectItem>
+                  <SelectItem value="DEATH">{t("recordType.death")}</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -109,7 +112,7 @@ function MedicalRecordForm({ citizen, onSuccess }: { citizen: Citizen; onSuccess
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Title</FormLabel>
+              <FormLabel>{t("details.title")}</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
@@ -123,7 +126,7 @@ function MedicalRecordForm({ citizen, onSuccess }: { citizen: Citizen; onSuccess
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>{t("details.description")}</FormLabel>
               <FormControl>
                 <Textarea {...field} />
               </FormControl>
@@ -138,9 +141,9 @@ function MedicalRecordForm({ citizen, onSuccess }: { citizen: Citizen; onSuccess
           render={({ field }) => (
             <FormItem className="flex items-center justify-between rounded-lg border p-4">
               <div className="space-y-0.5">
-                <FormLabel>Confidential</FormLabel>
+                <FormLabel>{t("settings.confidential")}</FormLabel>
                 <div className="text-sm text-muted-foreground">
-                  Mark this record as confidential
+                  {t("settings.markConfidential")}
                 </div>
               </div>
               <FormControl>
@@ -159,9 +162,9 @@ function MedicalRecordForm({ citizen, onSuccess }: { citizen: Citizen; onSuccess
           render={({ field }) => (
             <FormItem className="flex items-center justify-between rounded-lg border p-4">
               <div className="space-y-0.5">
-                <FormLabel>Police Visible</FormLabel>
+                <FormLabel>{t("settings.policeVisible")}</FormLabel>
                 <div className="text-sm text-muted-foreground">
-                  Allow police to view this record
+                  {t("settings.allowPoliceView")}
                 </div>
               </div>
               <FormControl>
@@ -180,9 +183,9 @@ function MedicalRecordForm({ citizen, onSuccess }: { citizen: Citizen; onSuccess
           render={({ field }) => (
             <FormItem className="flex items-center justify-between rounded-lg border p-4">
               <div className="space-y-0.5">
-                <FormLabel>Restricted Access</FormLabel>
+                <FormLabel>{t("settings.restrictedAccess")}</FormLabel>
                 <div className="text-sm text-muted-foreground">
-                  Restrict access to this record
+                  {t("settings.restrictAccess")}
                 </div>
               </div>
               <FormControl>
@@ -197,10 +200,10 @@ function MedicalRecordForm({ citizen, onSuccess }: { citizen: Citizen; onSuccess
 
         <div className="flex justify-end gap-4">
           <Button type="button" variant="outline" onClick={() => onSuccess?.()}>
-            Cancel
+            {tCommon("cancel")}
           </Button>
           <LoadingButton type="submit" loading={mutation.isPending}>
-            Create Record
+            {t("form.createRecord")}
           </LoadingButton>
         </div>
       </div>
@@ -209,19 +212,20 @@ function MedicalRecordForm({ citizen, onSuccess }: { citizen: Citizen; onSuccess
 }
 
 export function CreateMedicalRecordForm({ citizen }: { citizen: Citizen }) {
+  const t = useTranslations("EMS");
   const [open, setOpen] = useState(false);
 
   return (
     <>
       <Button onClick={() => setOpen(true)}>
         <Plus className="mr-2 h-4 w-4" />
-        Add Medical Record
+        {t("form.addMedicalRecord")}
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>New Medical Record</DialogTitle>
+            <DialogTitle>{t("form.newRecord")}</DialogTitle>
           </DialogHeader>
           <MedicalRecordForm 
             citizen={citizen} 

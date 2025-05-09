@@ -6,6 +6,7 @@ import { Layout } from "@/features/page/layout";
 import { logger } from "@/lib/logger";
 import { SERVER_LINKS } from "./permissions/routes-config";
 import { useSelectedLayoutSegments } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 type PermissionMiddlewareProps = PropsWithChildren & {
   serverSlug: string;
@@ -19,6 +20,7 @@ export function PermissionMiddleware({
   isPowerUser,
   userPermissions,
 }: PermissionMiddlewareProps) {
+  const t = useTranslations("Server");
   const segments = useSelectedLayoutSegments();
   const pathname = segments.length > 0 ? `/${segments.join('/')}` : '/';
 
@@ -43,7 +45,7 @@ export function PermissionMiddleware({
     logger.info("No route configuration found, denying access");
     return (
       <Layout>
-        <Error401 title="Unauthorized Access" />
+        <Error401 title={t("unauthorized")} />
       </Layout>
     );
   }
@@ -73,7 +75,7 @@ export function PermissionMiddleware({
 
   return (
     <Layout>
-      <Error401 title="Unauthorized Access" />
+      <Error401 title={t("unauthorized")} />
     </Layout>
   );
 }
