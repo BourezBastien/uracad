@@ -46,13 +46,16 @@ export default function VehiclesSection({
   };
 
   return (
-    <Card>
+
+    <Card className="md:col-span-3">
+
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>{t("title")}</CardTitle>
         <CheckPermission permissions="CREATE_VEHICLE">
           <Button asChild>
             <Link href={addVehicleHref}>
-              <PlusIcon className="h-4 w-4 mr-2" />
+              <PlusIcon className="h-4 w-4" />
+
               {t("addVehicle")}
             </Link>
           </Button>

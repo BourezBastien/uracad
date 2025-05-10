@@ -96,7 +96,7 @@ export default function AddFineDialog({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
         <Button>
-          <PlusIcon className="h-4 w-4 mr-2" />
+          <PlusIcon className="h-4 w-4" />
           {t("addFine")}
         </Button>
       </DialogTrigger>
