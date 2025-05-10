@@ -26,8 +26,7 @@ import VehiclesSection from "./vehicles-section";
 import { getTranslations } from "next-intl/server";
 import FinesSection from "./fines-section";
 import { Progress } from "@/components/ui/progress";
-
-import { Car, FileText, ShieldCheck } from "lucide-react";
+import { FileText, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 import JudicialCasesSection from "./judicial/judicial-cases-section";
 import type { JudicialCase } from "./judicial/judicial-cases-section";
@@ -52,7 +51,6 @@ export default async function CitizenPage({
   const tCommon = await getTranslations("Common");
   const tJudicial = await getTranslations("Judicial");
   const tWarrants = await getTranslations("Warrants");
-
 
   const citizen = await prisma.citizen.findUnique({
     where: { id: citizenId },
@@ -80,10 +78,8 @@ export default async function CitizenPage({
       warrants: {
         orderBy: { createdAt: "desc" },
       },
-
     },
   });
-
 
   if (!citizen) {
     notFound();
@@ -93,6 +89,31 @@ export default async function CitizenPage({
   const licensePoints = citizen.driversLicensePoints;
   const maxLicensePoints = 12;
   const pointsPercentage = (licensePoints / maxLicensePoints) * 100;
+
+  // Function to render license status
+  const renderLicenseStatus = (status: string | null) => {
+    if (!status) return null;
+    
+    if (status === "Valid") {
+      return (
+        <div className="px-3 py-2 rounded-md flex items-center bg-green-500/10 text-green-600 border border-green-500/20 justify-between">
+          <span className="px-2 py-0.5">Valide</span>
+        </div>
+      );
+    } else if (status === "Suspended") {
+      return (
+        <div className="px-3 py-2 rounded-md flex items-center bg-amber-500/10 text-amber-600 border border-amber-500/20 justify-between">
+          <span className="px-2 py-0.5">Suspendu</span>
+        </div>
+      );
+    } else {
+      return (
+        <div className="px-3 py-2 rounded-md flex items-center bg-red-500/10 text-red-600 border border-red-500/20 justify-between">
+          <span className="px-2 py-0.5">Révoqué</span>
+        </div>
+      );
+    }
+  };
 
   return (
     <Layout size="lg">
@@ -108,11 +129,9 @@ export default async function CitizenPage({
       </LayoutHeader>
 
       <LayoutContent>
-
         <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
           {/* Première rangée : Informations personnelles et points de permis */}
           <Card className="md:col-span-4">
-
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle>{t("personalInfo")}</CardTitle>
             </CardHeader>
@@ -182,9 +201,7 @@ export default async function CitizenPage({
           </Card>
 
           {/* License Points Card */}
-
           <Card className="md:col-span-2 relative overflow-hidden">
-
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2">
                 <ShieldCheck className="h-5 w-5" />
@@ -197,35 +214,16 @@ export default async function CitizenPage({
                   {/* Permis de conduire */}
                   <div className="flex flex-col">
                     <label className="text-muted-foreground text-xs mb-1">{t("licenses.driver")}</label>
-                    {citizen.driversLicense ? (
-                      citizen.driversLicense === "Valid" ? (
-
-                        <div className="px-3 py-2 rounded-md flex items-center bg-green-500/10 text-green-600 border border-green-500/20 justify-between">
+                    {citizen.driversLicense ? 
+                      renderLicenseStatus(citizen.driversLicense) : 
+                      (
+                        <div className="px-3 py-2 rounded-md border bg-red-500/10 text-red-600 border-red-500/20 flex items-center justify-between">
                           <span className="px-2 py-0.5">
-                            Valide
-                          </span>
-                        </div>
-                      ) : citizen.driversLicense === "Suspended" ? (
-                        <div className="px-3 py-2 rounded-md flex items-center bg-amber-500/10 text-amber-600 border border-amber-500/20 justify-between">
-                          <span className="px-2 py-0.5">
-                            Suspendu
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="px-3 py-2 rounded-md flex items-center bg-red-500/10 text-red-600 border border-red-500/20 justify-between">
-                          <span className="px-2 py-0.5">
-                            Révoqué
+                            {t("licenses.none")} 
                           </span>
                         </div>
                       )
-                    ) : (
-                      <div className="px-3 py-2 rounded-md border bg-red-500/10 text-red-600 border-red-500/20 flex items-center justify-between">
-                        <span className="px-2 py-0.5">
-                          {t("licenses.none")} 
-                        </span>
-                      </div>
-                    )}
-
+                    }
                   </div>
 
                   <div>
@@ -253,101 +251,46 @@ export default async function CitizenPage({
                     <div className="text-muted-foreground text-xs mb-1">
                       {t("licenses.pilot")}
                     </div>
-                    {citizen.pilotLicense ? (
-                      citizen.pilotLicense === "Valid" ? (
-                        <div className="px-3 py-2 rounded-md flex items-center bg-green-500/10 text-green-600 border border-green-500/20 justify-between">
+                    {citizen.pilotLicense ? 
+                      renderLicenseStatus(citizen.pilotLicense) : 
+                      (
+                        <div className="px-3 py-2 rounded-md border bg-red-500/10 text-red-600 border-red-500/20 flex items-center justify-between">
                           <span className="px-2 py-0.5">
-                            Valide
-                          </span>
-                        </div>
-                      ) : citizen.pilotLicense === "Suspended" ? (
-                        <div className="px-3 py-2 rounded-md flex items-center bg-amber-500/10 text-amber-600 border border-amber-500/20 justify-between">
-                          <span className="px-2 py-0.5">
-                            Suspendu
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="px-3 py-2 rounded-md flex items-center bg-red-500/10 text-red-600 border border-red-500/20 justify-between">
-                          <span className="px-2 py-0.5">
-                            Révoqué
+                            {t("licenses.none")}
                           </span>
                         </div>
                       )
-                    ) : (
-                      <div className="px-3 py-2 rounded-md border bg-red-500/10 text-red-600 border-red-500/20 flex items-center justify-between">
-                        <span className="px-2 py-0.5">
-                          {t("licenses.none")}
-                        </span>
-                      </div>
-                    )}
+                    }
                   </div>
                   <div>
                     <div className="text-muted-foreground text-xs mb-1">
                       {t("licenses.water")}
                     </div>
-                    {citizen.waterLicense ? (
-
-                      citizen.waterLicense === "Valid" ? (
-                        <div className="px-3 py-2 rounded-md flex items-center bg-green-500/10 text-green-600 border border-green-500/20 justify-between">
+                    {citizen.waterLicense ? 
+                      renderLicenseStatus(citizen.waterLicense) : 
+                      (
+                        <div className="px-3 py-2 rounded-md border bg-red-500/10 text-red-600 border-red-500/20 flex items-center justify-between">
                           <span className="px-2 py-0.5">
-                            Valide
-                          </span>
-                        </div>
-                      ) : citizen.waterLicense === "Suspended" ? (
-                        <div className="px-3 py-2 rounded-md flex items-center bg-amber-500/10 text-amber-600 border border-amber-500/20 justify-between">
-                          <span className="px-2 py-0.5">
-                            Suspendu
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="px-3 py-2 rounded-md flex items-center bg-red-500/10 text-red-600 border border-red-500/20 justify-between">
-                          <span className="px-2 py-0.5">
-                            Révoqué
+                            {t("licenses.none")}
                           </span>
                         </div>
                       )
-                    ) : (
-                      <div className="px-3 py-2 rounded-md border bg-red-500/10 text-red-600 border-red-500/20 flex items-center justify-between">
-                        <span className="px-2 py-0.5">
-                          {t("licenses.none")}
-                        </span>
-                      </div>
-                    )}
-
+                    }
                   </div>
                   <div className="col-span-2">
                     <div className="text-muted-foreground text-xs mb-1">
                       {t("licenses.firearms")}
                     </div>
-                    {citizen.firearmsLicense ? (
-                      citizen.firearmsLicense === "Valid" ? (
-
-                        <div className="px-3 py-2 rounded-md flex items-center bg-green-500/10 text-green-600 border border-green-500/20 justify-between">
+                    {citizen.firearmsLicense ? 
+                      renderLicenseStatus(citizen.firearmsLicense) : 
+                      (
+                        <div className="px-3 py-2 rounded-md border bg-red-500/10 text-red-600 border-red-500/20 flex items-center justify-between">
                           <span className="px-2 py-0.5">
-                            Valide
-                          </span>
-                        </div>
-
-                      ) : citizen.firearmsLicense === "Suspended" ? (
-                        <div className="px-3 py-2 rounded-md flex items-center bg-amber-500/10 text-amber-600 border border-amber-500/20 justify-between">
-                          <span className="px-2 py-0.5">
-                            Suspendu
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="px-3 py-2 rounded-md flex items-center bg-red-500/10 text-red-600 border border-red-500/20 justify-between">
-                          <span className="px-2 py-0.5">
-                            Révoqué
+                            {t("licenses.none")}
                           </span>
                         </div>
                       )
-                    ) : (
-                      <div className="px-3 py-2 rounded-md border bg-red-500/10 text-red-600 border-red-500/20 flex items-center justify-between">
-                        <span className="px-2 py-0.5">
-                          {t("licenses.none")}
-                        </span>
-                      </div>
-                    )}
+                    }
                   </div>
                 </div>
               </div>
@@ -497,125 +440,6 @@ export default async function CitizenPage({
               </CardContent>
             </Card>
           </CheckPermission>
-          {/* Section Vehicles */}
-          <CheckPermission permissions={["VIEW_CITIZEN"]}>
-            <Card className="md:col-span-3">
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="flex items-center gap-2">
-                  <Car className="h-5 w-5" />
-                  {t("vehicles.title")}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="h-full">
-                <VehiclesSection 
-                  vehicles={citizen.vehicles} 
-                  citizen={citizen} 
-                  serverSlug={serverSlug} 
-                />
-              </CardContent>
-            </Card>
-          </CheckPermission>
-
-          {/* Section Amendes */}
-          <Card className="md:col-span-3">
-            <FinesSection 
-              fines={citizen.fines} 
-              citizen={citizen} 
-            />
-          </Card>
-
-          {/* Dossiers médicaux */}
-          <Card className="md:col-span-3">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
-                {tEMS("title")}
-              </CardTitle>
-              <CheckPermission permissions={["CREATE_EMS"]}>
-                <CreateMedicalRecordForm citizen={citizen} />
-              </CheckPermission>
-            </CardHeader>
-            <CardContent>
-              {citizen.medicalRecords.length === 0 ? (
-                <div className="flex flex-col items-center justify-center p-6">
-                  <p className="text-center text-muted-foreground">
-                    {tEMS("noRecords")}
-                  </p>
-                </div>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[100px]">{tEMS("details.type")}</TableHead>
-                      <TableHead className="w-[200px]">{tEMS("details.title")}</TableHead>
-                      <TableHead>{tEMS("details.description")}</TableHead>
-                      <TableHead className="w-[100px]">{tEMS("details.bloodGroup")}</TableHead>
-                      <ActionsCheck>
-                        <TableHead className="w-[100px]">{tCommon("actions")}</TableHead>
-                      </ActionsCheck>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {citizen.medicalRecords.map((record) => ( 
-                      <TableRow 
-                        key={record.id} 
-                        className="cursor-pointer hover:bg-muted/50"
-                      >
-                        <TableCell>
-                          <Link 
-                            href={`/servers/${serverSlug}/citizens/${citizenId}/ems/${record.id}`}
-                            className="hover:underline block w-full h-full"
-                          >
-                            {record.type}
-                          </Link>
-                        </TableCell>
-                        <TableCell className="max-w-[150px] truncate">
-                          <Link 
-                            href={`/servers/${serverSlug}/citizens/${citizenId}/ems/${record.id}`}
-                            className="hover:underline block w-full h-full"
-                          >
-                            {record.title}
-                          </Link>
-                        </TableCell>
-                        <TableCell className="max-w-[300px] truncate">
-                          <Link 
-                            href={`/servers/${serverSlug}/citizens/${citizenId}/ems/${record.id}`}
-                            className="hover:underline block w-full h-full"
-                          >
-                            {record.description}
-                          </Link>
-                        </TableCell>
-                        <TableCell>
-                          <Link 
-                            href={`/servers/${serverSlug}/citizens/${citizenId}/ems/${record.id}`}
-                            className="hover:underline block w-full h-full"
-                          >
-                            A+
-                          </Link>
-                        </TableCell>
-                        <ActionsCheck>
-                          <TableCell>
-                            <div className="flex gap-2 z-10 relative">
-                              <EditRecordModal record={{
-                                id: record.id,
-                                type: record.type as "CARE" | "INJURY" | "TRAUMA" | "PSYCHOLOGY" | "DEATH",
-                                title: record.title,
-                                description: record.description,
-                                isConfidential: record.isConfidential,
-                                isPoliceVisible: record.isPoliceVisible,
-                                restrictedAccess: record.restrictedAccess,
-                              }} />
-                              <DeleteRecordModal record={record} />
-                            </div>
-                          </TableCell>
-                        </ActionsCheck>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </CardContent>
-          </Card>
         </div>
       </LayoutContent>
     </Layout>
