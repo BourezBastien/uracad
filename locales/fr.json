@@ -61,7 +61,9 @@
         "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce véhicule ?",
         "details": {
             "makeModel": "Marque & Modèle",
+
             "licensePlate": "immatriculation",
+
             "status": "Statut",
             "registration": "Immatriculation",
             "vin": "Numéro d'identification (VIN)",
@@ -285,6 +287,7 @@
             "VIEW_FINE": "Permet aux membres de consulter les amendes et sanctions.",
             "EDIT_FINE": "Permet aux membres de modifier les amendes et sanctions existantes.",
             "DELETE_FINE": "Permet aux membres de supprimer des amendes et sanctions.",
+
             "MANAGE_PENAL_CODE": "Permet aux membres de gérer les infractions du code pénal.",
             "VIEW_JUDICIAL_CASES": "Permet aux membres de consulter les casiers judiciaires.",
             "CREATE_WARRANT_DRAFT": "Permet aux membres de créer des brouillons de mandats.",
@@ -299,6 +302,7 @@
             "SUSPEND_MDT_ACCESS": "Permet aux membres de suspendre l'accès MDT (LSPD/FBI inclus).",
             "VIEW_WARRANT": "Voir mandats",
             "VIEW_JUDICIAL_CASE": "Voir casiers judiciaires"
+
         },
         "names": {
             "VIEW_SERVER": "Voir le serveur",
@@ -365,6 +369,7 @@
             "VIEW_FINE": "Voir amendes",
             "EDIT_FINE": "Modifier amende",
             "DELETE_FINE": "Supprimer amende",
+
             "MANAGE_PENAL_CODE": "Gérer code pénal",
             "VIEW_JUDICIAL_CASES": "Voir casiers judiciaires",
             "CREATE_WARRANT_DRAFT": "Créer mandat (brouillon)",
@@ -432,6 +437,7 @@
             "contestSuccess": "Amende marquée comme contestée",
             "contestError": "Échec de la contestation de l'amende"
         }
+
     },
     "JudicialCases": {
         "title": "Casier judiciaire",
@@ -627,5 +633,6 @@
             "other": "Autre"
         },
         "actions": "Actions"
+
     }
 }

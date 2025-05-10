@@ -68,6 +68,7 @@ export const permissionCategories: PermissionCategory[] = [
       { id: "EDIT_FINE", name: "Edit Fines" },
       { id: "DELETE_FINE", name: "Delete Fines" },
       { id: "MANAGE_PENAL_CODE", name: "Manage Penal Code" },
+
     ],
   },
   {
@@ -75,6 +76,7 @@ export const permissionCategories: PermissionCategory[] = [
     name: "DOJ",
     description: "Permissions pour le système judiciaire (Department of Justice)",
     permissions: [
+
       { 
         id: "VIEW_JUDICIAL_CASES", 
         name: "View Judicial Cases"
@@ -119,6 +121,7 @@ export const permissionCategories: PermissionCategory[] = [
         id: "SUSPEND_MDT_ACCESS", 
         name: "Suspend MDT Access"
       },
+
     ],
   },
   {
@@ -216,9 +219,11 @@ export const permissionCategories: PermissionCategory[] = [
       { id: "VIEW_VEHICLE", name: "View Vehicles" },
       { id: "EDIT_VEHICLE", name: "Edit Vehicles" },
       { id: "DELETE_VEHICLE", name: "Delete Vehicles" },
+
       { id: "VIEW_WARRANT", name: "View Warrants" },
       { id: "VIEW_JUDICIAL_CASE", name: "View Judicial Cases" },
       { id: "VIEW_FINE", name: "View Fines" },
+
     ],
   },
 ];
@@ -300,6 +305,7 @@ export const PERMISSIONS_GROUPS = [
       { id: "VIEW_VEHICLE", name: "View Vehicles" },
       { id: "EDIT_VEHICLE", name: "Edit Vehicles" },
       { id: "DELETE_VEHICLE", name: "Delete Vehicles" },
+
     ],
   },
   {

@@ -71,6 +71,7 @@ model Verification {
 }
 
 model Organization {
+
   id            String         @id
   name          String
   slug          String?

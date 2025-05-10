@@ -46,6 +46,7 @@ export function CreateMedicalRecordForm({ citizen }: { citizen: Citizen }) {
     <>
       <Button onClick={() => setOpen(true)}>
         <Plus className="h-4 w-4" />
+
         {t("form.addMedicalRecord")}
       </Button>
 

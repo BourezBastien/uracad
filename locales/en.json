@@ -285,6 +285,7 @@
             "VIEW_FINE": "Allows members to view fines and penalties.",
             "EDIT_FINE": "Allows members to edit existing fines and penalties.",
             "DELETE_FINE": "Allows members to delete fines and penalties.",
+
             "MANAGE_PENAL_CODE": "Allows members to manage penal code offenses.",
             "VIEW_JUDICIAL_CASES": "Allows members to view judicial cases.",
             "CREATE_WARRANT_DRAFT": "Allows members to create warrant drafts.",
@@ -299,6 +300,7 @@
             "SUSPEND_MDT_ACCESS": "Allows members to suspend MDT access (including LSPD/FBI).",
             "VIEW_WARRANT": "Allows members to view arrest warrants.",
             "VIEW_JUDICIAL_CASE": "Allows members to view judicial cases."
+
         },
         "names": {
             "VIEW_SERVER": "View Server",
@@ -365,6 +367,7 @@
             "VIEW_FINE": "View Fines",
             "EDIT_FINE": "Edit Fines",
             "DELETE_FINE": "Delete Fines",
+
             "MANAGE_PENAL_CODE": "Manage Penal Code",
             "VIEW_JUDICIAL_CASES": "View Judicial Cases",
             "CREATE_WARRANT_DRAFT": "Create Warrant Draft",
@@ -379,6 +382,7 @@
             "SUSPEND_MDT_ACCESS": "Suspend MDT Access",
             "VIEW_WARRANT": "View Warrants",
             "VIEW_JUDICIAL_CASE": "View Judicial Cases"
+
         }
     },
     "Fines": {
@@ -432,6 +436,7 @@
             "contestSuccess": "Fine marked as contested",
             "contestError": "Failed to contest fine"
         }
+
     },
     "Warrants": {
         "title": "Warrants",
@@ -600,5 +605,6 @@
             "other": "Other"
         },
         "actions": "Actions"
+
     }
 }
