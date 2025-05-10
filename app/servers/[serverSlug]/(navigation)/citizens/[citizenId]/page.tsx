@@ -27,7 +27,7 @@ import { getTranslations } from "next-intl/server";
 import FinesSection from "./fines-section";
 import { Progress } from "@/components/ui/progress";
 
-import { FileText, ShieldCheck } from "lucide-react";
+import { Car, FileText, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 import JudicialCasesSection from "./judicial/judicial-cases-section";
 import type { JudicialCase } from "./judicial/judicial-cases-section";
