@@ -388,6 +388,7 @@
     },
     "Fines": {
         "title": "Amendes et sanctions",
+        "statusLabel": "Statut",
         "penalCode": "Code Pénal",
         "allCategories": "Toutes les catégories",
         "selectCategory": "Sélectionner une catégorie",
@@ -418,13 +419,26 @@
         "details": "Détails",
         "close": "Fermer",
         "payNow": "Payer maintenant",
-        "payFineDescription": "Êtes-vous sûr de vouloir marquer cette amende comme payée? Montant: {amount} $",
-        "deleteFineDescription": "Êtes-vous sûr de vouloir supprimer cette amende? Cette action ne peut pas être annulée.",
-        "status": {
-            "pending": "En attente",
-            "paid": "Payée",
-            "contested": "Contestée"
-        },
+        "pay": "Payer",
+        "contest": "Contester",
+        "date": "Date",
+        "paidOn": "Payée le",
+        "singleFineTitle": "Détails de l'amende",
+        "singleFineDescription": "Consultez les détails de l'amende et choisissez une action.",
+        "paymentSuccessful": "Amende payée avec succès !",
+        "contestSuccessful": "Amende contestée avec succès !",
+        "finesTableCaption": "Liste des amendes en attente",
+        "publicAccess": "Accès public aux amendes",
+        "publicAccessTitle": "Paiement d'amende",
+        "publicAccessDescription": "Cette page vous permet de payer ou contester une amende.",
+        "accessDenied": "Accès refusé",
+        "needCitizenId": "Identifiant du citoyen requis pour accéder aux amendes",
+        "noOutstandingFines": "Aucune amende en attente",
+        "allFinesPaid": "Toutes les amendes ont été payées ou traitées",
+        "privacyNotice": "Vos données sont protégées et utilisées uniquement pour traiter cette amende.",
+        "copyShareLink": "Copier le lien de partage",
+        "generateShareLink": "Générer un lien de partage",
+        "shareFine": "Partager l'amende",
         "actions": {
             "addSuccess": "Amende créée avec succès",
             "addError": "Échec de la création de l'amende",
@@ -435,9 +449,16 @@
             "paySuccess": "Amende marquée comme payée",
             "payError": "Échec du paiement de l'amende",
             "contestSuccess": "Amende marquée comme contestée",
-            "contestError": "Échec de la contestation de l'amende"
+            "contestError": "Échec de la contestation de l'amende",
+            "linkCopied": "Lien de partage copié dans le presse-papier"
+        },
+        "payFineDescription": "Êtes-vous sûr de vouloir marquer cette amende comme payée? Montant: {amount} $",
+        "deleteFineDescription": "Êtes-vous sûr de vouloir supprimer cette amende? Cette action ne peut pas être annulée.",
+        "status": {
+            "pending": "En attente",
+            "paid": "Payée",
+            "contested": "Contestée"
         }
-
     },
     "JudicialCases": {
         "title": "Casier judiciaire",

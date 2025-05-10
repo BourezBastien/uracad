@@ -5,9 +5,10 @@
  * @returns Formatted currency string
  */
 export default function formatCurrency(amount: number, currency = 'USD'): string {
-  return new Intl.NumberFormat('fr-FR', {
+  return new Intl.NumberFormat(undefined, {
     style: 'currency',
     currency,
+    currencyDisplay: 'symbol',
     minimumFractionDigits: 0,
     maximumFractionDigits: 2
   }).format(amount);

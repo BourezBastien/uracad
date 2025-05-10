@@ -387,6 +387,7 @@
     },
     "Fines": {
         "title": "Fines and Penalties",
+        "statusLabel": "Status",
         "penalCode": "Penal Code",
         "allCategories": "All Categories",
         "selectCategory": "Select a category",
@@ -417,13 +418,26 @@
         "details": "Details",
         "close": "Close",
         "payNow": "Pay now",
-        "payFineDescription": "Are you sure you want to mark this fine as paid? Amount: ${amount}",
-        "deleteFineDescription": "Are you sure you want to delete this fine? This action cannot be undone.",
-        "status": {
-            "pending": "Pending",
-            "paid": "Paid",
-            "contested": "Contested"
-        },
+        "pay": "Pay",
+        "contest": "Contest",
+        "date": "Date",
+        "paidOn": "Paid on",
+        "singleFineTitle": "Fine Details",
+        "singleFineDescription": "View the fine details and choose an action.",
+        "paymentSuccessful": "Fine paid successfully!",
+        "contestSuccessful": "Fine contested successfully!",
+        "finesTableCaption": "List of pending fines",
+        "publicAccess": "Public Access to Fines",
+        "publicAccessTitle": "Fine Payment",
+        "publicAccessDescription": "This page allows you to pay or contest a fine.",
+        "accessDenied": "Access Denied",
+        "needCitizenId": "Citizen ID required to access fines",
+        "noOutstandingFines": "No outstanding fines",
+        "allFinesPaid": "All fines have been paid or processed",
+        "privacyNotice": "Your data is protected and used only to process this fine.",
+        "copyShareLink": "Copy share link",
+        "generateShareLink": "Generate share link",
+        "shareFine": "Share fine",
         "actions": {
             "addSuccess": "Fine created successfully",
             "addError": "Failed to create fine",
@@ -434,9 +448,16 @@
             "paySuccess": "Fine marked as paid",
             "payError": "Failed to pay fine",
             "contestSuccess": "Fine marked as contested",
-            "contestError": "Failed to contest fine"
+            "contestError": "Failed to contest fine",
+            "linkCopied": "Share link copied to clipboard"
+        },
+        "payFineDescription": "Are you sure you want to mark this fine as paid? Amount: ${amount}",
+        "deleteFineDescription": "Are you sure you want to delete this fine? This action cannot be undone.",
+        "status": {
+            "pending": "Pending",
+            "paid": "Paid",
+            "contested": "Contested"
         }
-
     },
     "Warrants": {
         "title": "Warrants",

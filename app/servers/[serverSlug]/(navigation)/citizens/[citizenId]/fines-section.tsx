@@ -14,12 +14,12 @@ import {
   Badge,
 } from "@/components/ui/badge";
 import type { Citizen, Fine } from "@prisma/client";
-import { TrashIcon, DollarSignIcon, ChevronDownIcon, ChevronUpIcon, Loader2, PiggyBank } from "lucide-react";
+import { TrashIcon, DollarSignIcon, ChevronDownIcon, ChevronUpIcon, Loader2, PiggyBank, Share2 } from "lucide-react";
 import { useState } from "react";
 import formatCurrency from "@/lib/format/currency";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -35,6 +35,9 @@ import AddFineDialog from "./add-fine-dialog";
 import { deleteFineAction, processFinePaymentAction } from "./fines/fines.action";
 import { logger } from "@/lib/logger";
 import CheckPermission from "../../permissions/check-permissions";
+import { buttonVariants } from "@/components/ui/button";
+import Link from "next/link";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 type FineWithPenalCode = Fine & {
   penalCode: {
@@ -53,15 +56,19 @@ export default function FinesSection({
   const t = useTranslations("Fines");
   const tCommon = useTranslations("Common");
   
-  // Utiliser directement les traductions 
-  const dateTranslation = "Date";
-  const statusTranslation = "Statut";
+  // Use translation keys instead of hardcoded strings
+  const dateTranslation = t("date");
+  const statusTranslation = t("statusLabel");
   
   const router = useRouter();
+  const params = useParams();
+  const serverSlug = params.serverSlug as string;
+
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   const [actionInProgress, setActionInProgress] = useState<string | null>(null);
   const [fineToDelete, setFineToDelete] = useState<FineWithPenalCode | null>(null);
   const [fineToPayOptions, setFineToPayOptions] = useState<{fine: FineWithPenalCode, action: 'pay' | 'contest'} | null>(null);
+  const [copyInProgress, setCopyInProgress] = useState<string | null>(null);
   
   const toggleExpand = (id: string) => {
     const newExpanded = new Set(expandedIds);
@@ -125,6 +132,21 @@ export default function FinesSection({
     const d = new Date(date);
     return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
   };
+  
+  // Fonction pour copier le lien de partage d'une amende
+  const copyShareLink = async (fineId: string) => {
+    setCopyInProgress(fineId);
+    try {
+      const shareUrl = `${window.location.origin}/servers/${serverSlug}/public-share/fines/${fineId}`;
+      await navigator.clipboard.writeText(shareUrl);
+      toast.success(t("actions.linkCopied"));
+    } catch (error) {
+      logger.error(error);
+      toast.error("Failed to copy to clipboard");
+    } finally {
+      setCopyInProgress(null);
+    }
+  };
 
   return (
     <>
@@ -133,9 +155,11 @@ export default function FinesSection({
           <PiggyBank className="h-5 w-5" />
           {t("title")}
         </CardTitle>
-        <CheckPermission permissions={["CREATE_FINE"]}>
-          <AddFineDialog citizen={citizen} />
-        </CheckPermission>
+        <div className="flex items-center gap-2">
+          <CheckPermission permissions={["CREATE_FINE"]}>
+            <AddFineDialog citizen={citizen} />
+          </CheckPermission>
+        </div>
       </CardHeader>
       <CardContent className="h-min">
         
@@ -200,6 +224,33 @@ export default function FinesSection({
                           </Button>
                           
                           <div className="flex items-center space-x-3">
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 text-blue-600 hover:text-blue-700"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      void copyShareLink(fine.id);
+                                    }}
+                                    disabled={copyInProgress === fine.id || isLoading}
+                                  >
+                                    {copyInProgress === fine.id ? (
+                                      <Loader2 className="h-4 w-4 animate-spin" />
+                                    ) : (
+                                      <Share2 className="h-4 w-4" />
+                                    )}
+                                    <span className="sr-only">{t("shareFine")}</span>
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>{t("copyShareLink")}</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                            
                             {fine.status === "PENDING" && (
                               <CheckPermission permissions={["EDIT_FINE"]}>
                                 <Button
@@ -274,6 +325,25 @@ export default function FinesSection({
                                 <p className="whitespace-pre-wrap">{fine.notes}</p>
                               </div>
                             )}
+                            <div className="col-span-2 mt-2 pt-2 border-t flex justify-end">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="text-blue-600 border-blue-600"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  void copyShareLink(fine.id);
+                                }}
+                                disabled={copyInProgress === fine.id}
+                              >
+                                {copyInProgress === fine.id ? (
+                                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                ) : (
+                                  <Share2 className="h-4 w-4 mr-2" />
+                                )}
+                                {t("generateShareLink")}
+                              </Button>
+                            </div>
                           </div>
                         </TableCell>
                       </TableRow>
