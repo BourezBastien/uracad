@@ -309,7 +309,6 @@ model JudicialCase {
   @@index([createdByDept])
 }
 
-
 model Warrant {
   id            String @id @default(cuid())
   warrantNumber String // Numéro du mandat
@@ -354,116 +353,8 @@ model Warrant {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-model Vehicle {
-  id          String    @id @default(cuid())
-  citizenId   String
-  citizen     Citizen   @relation(fields: [citizenId], references: [id], onDelete: Cascade)
-  organizationId String
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  
-  // Informations du véhicule
-  make        String    // Marque (ex: Toyota, BMW)
-  model       String    // Modèle (ex: Corolla, X5)
-  year        Int?      // Année de fabrication
-  licensePlate String   // Plaque d'immatriculation
-  vin         String?   // Numéro d'identification du véhicule
-  
-  // Caractéristiques
-  color       String    // Couleur
-  type        String    // Type de véhicule (voiture, moto, camion, etc.)
-  category    String?   // Catégorie (berline, SUV, etc.)
-  
-  // État et statut
-  status      String    @default("ACTIVE") // ACTIVE, STOLEN, IMPOUNDED, DESTROYED
-  registrationStatus String @default("REGISTERED") // REGISTERED, EXPIRED, SUSPENDED
-  insuranceStatus String? // INSURED, UNINSURED
-  
-  // Dates importantes
-  registrationExpiryDate DateTime?
-  lastInspectionDate     DateTime?
-  
-  // Informations supplémentaires
-  modifications String?  // Modifications apportées au véhicule
-  additionalInfo String? // Informations supplémentaires
-  
-  // Relations
-  fines        Fine[]    // Amendes liées à ce véhicule
-  
-  // Métadonnées
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
 
   @@index([citizenId])
   @@index([organizationId])
-  @@index([licensePlate])
-}
-
-// Modèle pour les infractions prédéfinies du code pénal
-model PenalCode {
-  id             String   @id @default(cuid())
-  code           String   // Code de l'infraction (ex: A-101)
-  category       String   // Catégorie (Trafic, Crime, Délit, etc.)
-  description    String   // Description de l'infraction
-  minFine        Float    // Montant minimum de l'amende
-  maxFine        Float    // Montant maximum de l'amende
-  licensePoints  Int?     // Points retirés du permis (facultatif)
-  jailTime       Int?     // Temps de prison en minutes (facultatif)
-  notes          String?  // Notes supplémentaires
-  
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  
-  fines          Fine[]    // Amendes associées à cette infraction
-  
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  @@index([organizationId])
-  @@index([code])
-  @@index([category])
-}
-
-// Modèle pour les amendes appliquées
-model Fine {
-  id             String   @id @default(cuid())
-  citizenId      String
-  citizen        Citizen  @relation(fields: [citizenId], references: [id], onDelete: Cascade)
-  penalCodeId    String?
-  penalCode      PenalCode? @relation(fields: [penalCodeId], references: [id], onDelete: SetNull)
-  
-  // Véhicule impliqué dans l'infraction (pour les infractions de trafic)
-  vehicleId      String?
-  vehicle        Vehicle? @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
-  
-  // Détails de l'amende
-  amount         Float    // Montant de l'amende
-  reason         String   // Raison/description
-  location       String?  // Lieu de l'infraction
-  licensePoints  Int?     // Points retirés du permis
-  jailTime       Int?     // Temps de prison en minutes
-  
-  // Statut
-  status         String   @default("PENDING") // PENDING, PAID, CONTESTED
-  paidAt         DateTime? // Date de paiement
-  
-  // Qui a émis l'amende
-  issuedById     String?
-  issuedByName   String    // Nom de l'agent qui a émis l'amende
-  issuedByDept   String    // Département (LSPD, Sheriff, FBI)
-  
-  notes          String?   // Notes supplémentaires
-  
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-
-  @@index([citizenId])
-  @@index([organizationId])
-  @@index([status])
   @@index([judicialCaseId])
-  @@index([issuedByDept])
 }
-
