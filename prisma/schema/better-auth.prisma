@@ -71,20 +71,22 @@ model Verification {
 }
 
 model Organization {
-  id          String       @id
-  name        String
-  slug        String?
-  logo        String?
-  createdAt   DateTime
-  metadata    String?
-  members     Member[]
-  invitations Invitation[]
-  email       String?
-  Department  Department[]
-  citizens    Citizen[]
-  vehicles    Vehicle[]
-  fines       Fine[]
-  penalCodes  PenalCode[]
+  id            String         @id
+  name          String
+  slug          String?
+  logo          String?
+  createdAt     DateTime
+  metadata      String?
+  members       Member[]
+  invitations   Invitation[]
+  email         String?
+  Department    Department[]
+  citizens      Citizen[]
+  vehicles      Vehicle[]
+  fines         Fine[]
+  penalCodes    PenalCode[]
+  judicialCases JudicialCase[]
+  warrants      Warrant[]
 
   // Relations
 

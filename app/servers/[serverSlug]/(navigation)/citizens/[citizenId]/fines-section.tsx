@@ -137,7 +137,7 @@ export default function FinesSection({
           <AddFineDialog citizen={citizen} />
         </CheckPermission>
       </CardHeader>
-      <CardContent className="h-full">
+      <CardContent className="h-min">
         
         {fines.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-6">

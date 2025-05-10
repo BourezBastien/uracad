@@ -61,11 +61,64 @@ export const permissionCategories: PermissionCategory[] = [
       { id: "PLATE_SEARCH", name: "Plate Search" },
       { id: "WEAPON_SEARCH", name: "Weapon Search" },
       { id: "MANAGE_WARRANTS", name: "Manage Warrants" },
+      { id: "VIEW_WARRANT", name: "View Warrants" },
+      { id: "VIEW_JUDICIAL_CASE", name: "View Judicial Cases" },
       { id: "CREATE_FINE", name: "Create Fine" },
       { id: "VIEW_FINE", name: "View Fines" },
       { id: "EDIT_FINE", name: "Edit Fines" },
       { id: "DELETE_FINE", name: "Delete Fines" },
       { id: "MANAGE_PENAL_CODE", name: "Manage Penal Code" },
+    ],
+  },
+  {
+    id: "doj",
+    name: "DOJ",
+    description: "Permissions pour le système judiciaire (Department of Justice)",
+    permissions: [
+      { 
+        id: "VIEW_JUDICIAL_CASES", 
+        name: "View Judicial Cases"
+      },
+      { 
+        id: "CREATE_WARRANT_DRAFT", 
+        name: "Create Warrant Draft"
+      },
+      { 
+        id: "VALIDATE_WARRANT", 
+        name: "Validate Warrant"
+      },
+      { 
+        id: "EDIT_JUDICIAL_CASE", 
+        name: "Edit Judicial Case"
+      },
+      { 
+        id: "CLOSE_PROCEDURE", 
+        name: "Close Procedure"
+      },
+      { 
+        id: "VIEW_SENSITIVE_CASES", 
+        name: "View Sensitive Cases"
+      },
+      { 
+        id: "LOCK_JUDICIAL_CASE", 
+        name: "Lock Judicial Case"
+      },
+      { 
+        id: "DELETE_JUDICIAL_CASE", 
+        name: "Delete Judicial Case"
+      },
+      { 
+        id: "VIEW_JUDICIAL_LOGS", 
+        name: "View Judicial Logs"
+      },
+      { 
+        id: "MANAGE_DOJ_ACCESS", 
+        name: "Manage DOJ Access"
+      },
+      { 
+        id: "SUSPEND_MDT_ACCESS", 
+        name: "Suspend MDT Access"
+      },
     ],
   },
   {
@@ -163,6 +216,9 @@ export const permissionCategories: PermissionCategory[] = [
       { id: "VIEW_VEHICLE", name: "View Vehicles" },
       { id: "EDIT_VEHICLE", name: "Edit Vehicles" },
       { id: "DELETE_VEHICLE", name: "Delete Vehicles" },
+      { id: "VIEW_WARRANT", name: "View Warrants" },
+      { id: "VIEW_JUDICIAL_CASE", name: "View Judicial Cases" },
+      { id: "VIEW_FINE", name: "View Fines" },
     ],
   },
 ];
@@ -244,6 +300,18 @@ export const PERMISSIONS_GROUPS = [
       { id: "VIEW_VEHICLE", name: "View Vehicles" },
       { id: "EDIT_VEHICLE", name: "Edit Vehicles" },
       { id: "DELETE_VEHICLE", name: "Delete Vehicles" },
+    ],
+  },
+  {
+    name: "Law Enforcement",
+    permissions: [
+      { id: "VIEW_LEO", name: "View Law Enforcement" },
+      { id: "MANAGE_LEO", name: "Manage Law Enforcement" },
+      { id: "VIEW_WARRANT", name: "View Warrants" }, 
+      { id: "MANAGE_WARRANTS", name: "Manage Warrants" },
+      { id: "VIEW_JUDICIAL_CASE", name: "View Judicial Cases" },
+      { id: "VIEW_FINE", name: "View Fines" },
+      { id: "CREATE_FINE", name: "Create Fine" },
     ],
   },
 ]; 
