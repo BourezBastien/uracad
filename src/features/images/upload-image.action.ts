@@ -11,22 +11,28 @@ export const uploadImageAction = serverAction
     }),
   )
   .action(async ({ parsedInput: { formData } }) => {
-    const files = formData.get("files") as File | File[];
-
-    let file: File;
-
-    if (Array.isArray(files)) {
-      file = files[0];
-    } else {
-      file = files;
+    const files = formData.get("files");
+    
+    if (!files) {
+      throw new ActionError("No file provided");
     }
 
-    if (!(file instanceof File)) {
-      throw new ActionError("Invalid file (not a file)");
+    // Check if it's a valid file-like object without using instanceof File
+    const isFileObject = typeof files === 'object' && 
+                         'name' in files && 
+                         'size' in files && 
+                         'type' in files;
+    
+    if (!isFileObject && !Array.isArray(files)) {
+      throw new ActionError("Invalid file format");
     }
 
-    // If file is not an image throw an error
-    if (!file.type.startsWith("image/")) {
+    // Handle single file or first file in array
+    const file = Array.isArray(files) ? files[0] : files;
+    
+    // Type check for image mimetype
+    const fileType = file.type;
+    if (!fileType || !fileType.startsWith("image/")) {
       throw new ActionError("Invalid file (only images are allowed)");
     }
 
