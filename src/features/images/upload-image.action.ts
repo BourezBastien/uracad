@@ -30,9 +30,8 @@ export const uploadImageAction = serverAction
     // Handle single file or first file in array
     const file = Array.isArray(files) ? files[0] : files;
     
-    // Type check for image mimetype
-    const fileType = file.type;
-    if (!fileType || !fileType.startsWith("image/")) {
+    // Type check for image mimetype using optional chaining
+    if (!file.type?.startsWith("image/")) {
       throw new ActionError("Invalid file (only images are allowed)");
     }
 

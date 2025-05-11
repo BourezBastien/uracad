@@ -10,13 +10,10 @@ export const generateMetadata = combineWithParentMetadata({
 export default async function RouteLayout(
   props: LayoutParams<{ fineId: string; serverSlug: string }>,
 ) {
-  // Wait for params Promise to resolve
-  const params = await props.params;
-  const { serverSlug } = params;
 
   return (
     <div className="flex h-screen w-full overflow-hidden">
-      <PublicNavigation serverSlug={serverSlug}>
+      <PublicNavigation>
         {props.children}
       </PublicNavigation>
     </div>

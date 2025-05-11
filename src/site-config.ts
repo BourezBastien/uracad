@@ -24,7 +24,7 @@ export const SiteConfig = {
      * Or you can use Cloudflare R2 : https://mlv.sh/cloudflare-r2-tutorial
      * Or you can use AWS S3 : https://mlv.sh/aws-s3-tutorial
      */
-    enableImageUpload: false as boolean,
+    enableImageUpload: true as boolean,
     /**
      * If enable, the user will be redirected to `/servers` when he visits the landing page at `/`
      * The logic is located in middleware.ts
