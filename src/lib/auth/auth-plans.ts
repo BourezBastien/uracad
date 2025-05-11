@@ -12,7 +12,7 @@ import type { AuthPlan } from "./auth-type";
 const DEFAULT_LIMIT = {
   projects: 5,
   storage: 10,
-  members: 3,
+  members: 500,
 };
 
 export type PlanLimit = typeof DEFAULT_LIMIT;
