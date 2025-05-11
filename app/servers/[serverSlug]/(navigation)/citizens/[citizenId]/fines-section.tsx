@@ -19,7 +19,7 @@ import { useState } from "react";
 import formatCurrency from "@/lib/format/currency";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { useRouter, useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -59,6 +59,8 @@ export default function FinesSection({
   const statusTranslation = t("statusLabel");
   
   const router = useRouter();
+  const params = useParams();
+  const serverSlug = params.serverSlug as string;
 
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   const [actionInProgress, setActionInProgress] = useState<string | null>(null);
