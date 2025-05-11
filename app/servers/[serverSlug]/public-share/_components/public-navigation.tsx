@@ -13,6 +13,7 @@ import LocaleSwitcher from "@/components/i18n/LocaleSwitcher";
 
 
 export function PublicNavigation({ children }: PropsWithChildren) {
+
   return (
     <SidebarProvider>
       <PublicSidebar />
