@@ -11,11 +11,8 @@ import { PublicSidebar } from "./publicSidebar";
 import { ThemeToggle } from "@/features/theme/theme-toggle";
 import LocaleSwitcher from "@/components/i18n/LocaleSwitcher";
 
-type PublicNavigationProps = PropsWithChildren & {
-  serverSlug: string;
-};
 
-export function PublicNavigation({ children, serverSlug }: PublicNavigationProps) {
+export function PublicNavigation({ children }: PropsWithChildren) {
   return (
     <SidebarProvider>
       <PublicSidebar />

@@ -1,4 +1,4 @@
-import { Loader } from "@/components/uracad/loader";
+
 import { Typography } from "@/components/uracad/typography";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -8,14 +8,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { getUser } from "@/lib/auth/auth-user";
 import { SiteConfig } from "@/site-config";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Suspense } from "react";
-import { SignUpCredentialsForm } from "./sign-up-credentials-form";
 
-export default async function AuthSignInPage() {
+export default async function AuthSignUpPage() {
   const user = await getUser();
 
   if (user) {
@@ -33,13 +32,15 @@ export default async function AuthSignInPage() {
         </Avatar>
         <CardTitle>Sign up to {SiteConfig.title}</CardTitle>
         <CardDescription>
-          We just need a few details to get you started.
+          Sign up using one of our social providers.
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <Suspense fallback={<Loader />}>
-          <SignUpCredentialsForm />
-        </Suspense>
+      <CardContent className="flex flex-col items-center">
+        <Button asChild variant="default" className="mt-4 w-full">
+          <Link href="/auth/signin">
+            Continue to Sign In
+          </Link>
+        </Button>
 
         <Typography variant="muted" className="mt-4 text-xs">
           You already have an account?{" "}

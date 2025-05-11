@@ -43,6 +43,14 @@ const LogoMap = {
       </g>
     </svg>
   ),
+  discord: (props: LucideProps) => (
+    <svg
+      viewBox="0 0 256 256"
+      version="1.1"
+      preserveAspectRatio="xMidYMid"
+      {...props}
+    ></svg>
+  ),
 };
 
 type LogoKeys = keyof typeof LogoMap;

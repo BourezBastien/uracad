@@ -15,10 +15,14 @@ const ProviderData: Record<string, { icon: ReactNode; name: string }> = {
     icon: <Logo name="google" size={16} />,
     name: "Google",
   },
+  discord: {
+    icon: <Logo name="discord" size={16} />,
+    name: "Discord",
+  },
 };
 
 type ProviderButtonProps = {
-  providerId: "github" | "google";
+  providerId: "github" | "google" | "discord";
   callbackUrl?: string;
 };
 
@@ -42,6 +46,8 @@ export const ProviderButton = (props: ProviderButtonProps) => {
           data.name === "Google",
         "border-gray-500 bg-black text-white hover:bg-gray-950":
           data.name === "Github",
+        "border-gray-500 bg-[#5865F2] text-white hover:bg-[#4752c4]":
+          data.name === "Discord",
       })}
       size="lg"
       onClick={() => {
