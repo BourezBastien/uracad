@@ -78,9 +78,11 @@ model Organization {
   logo          String?
   createdAt     DateTime
   metadata      String?
-  members       Member[]
-  invitations   Invitation[]
   email         String?
+
+  // Relations
+
+  medicalRecords MedicalRecord[]
   Department    Department[]
   citizens      Citizen[]
   vehicles      Vehicle[]
@@ -88,10 +90,10 @@ model Organization {
   penalCodes    PenalCode[]
   judicialCases JudicialCase[]
   warrants      Warrant[]
-
-  // Relations
-
-  medicalRecords MedicalRecord[]
+  members       Member[]
+  invitations   Invitation[]
+  activeOfficers ActiveOfficer[]
+  
 
   @@unique([slug])
   @@map("organization")

@@ -61,9 +61,7 @@
         "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce véhicule ?",
         "details": {
             "makeModel": "Marque & Modèle",
-
             "licensePlate": "immatriculation",
-
             "status": "Statut",
             "registration": "Immatriculation",
             "vin": "Numéro d'identification (VIN)",
@@ -287,7 +285,6 @@
             "VIEW_FINE": "Permet aux membres de consulter les amendes et sanctions.",
             "EDIT_FINE": "Permet aux membres de modifier les amendes et sanctions existantes.",
             "DELETE_FINE": "Permet aux membres de supprimer des amendes et sanctions.",
-
             "MANAGE_PENAL_CODE": "Permet aux membres de gérer les infractions du code pénal.",
             "VIEW_JUDICIAL_CASES": "Permet aux membres de consulter les casiers judiciaires.",
             "CREATE_WARRANT_DRAFT": "Permet aux membres de créer des brouillons de mandats.",
@@ -302,7 +299,6 @@
             "SUSPEND_MDT_ACCESS": "Permet aux membres de suspendre l'accès MDT (LSPD/FBI inclus).",
             "VIEW_WARRANT": "Voir mandats",
             "VIEW_JUDICIAL_CASE": "Voir casiers judiciaires"
-
         },
         "names": {
             "VIEW_SERVER": "Voir le serveur",
@@ -369,7 +365,6 @@
             "VIEW_FINE": "Voir amendes",
             "EDIT_FINE": "Modifier amende",
             "DELETE_FINE": "Supprimer amende",
-
             "MANAGE_PENAL_CODE": "Gérer code pénal",
             "VIEW_JUDICIAL_CASES": "Voir casiers judiciaires",
             "CREATE_WARRANT_DRAFT": "Créer mandat (brouillon)",
@@ -654,7 +649,6 @@
             "other": "Autre"
         },
         "actions": "Actions"
-
     },
     "PublicShare": {
         "title": "Portail Public",
@@ -665,5 +659,124 @@
         "helpText": "Si vous avez besoin d'assistance pour payer votre amende ou si vous avez des questions sur le processus, veuillez nous contacter.",
         "contactUs": "Contactez-nous",
         "login": "Connexion à mon compte"
+    },
+    "ActiveOfficers": {
+        "title": "Agents en service",
+        "createTemporaryUnit": "Créer une unité temporaire",
+        "noOfficersFound": "Aucun agent en service trouvé",
+        "tableHeaders": {
+            "officer": "AGENT",
+            "badgeNumber": "NUMÉRO DE BADGE",
+            "department": "DÉPARTEMENT",
+            "status": "STATUT",
+            "incident": "INCIDENT",
+            "activeCall": "APPEL ACTIF",
+            "radioChannel": "CANAL RADIO",
+            "actions": "ACTIONS"
+        },
+        "statusLabels": {
+            "onDuty": "En service",
+            "onBreak": "En pause",
+            "responding": "En intervention",
+            "meal": "Pause repas",
+            "patrol": "En patrouille",
+            "emergency": "Urgence"
+        },
+        "placeholders": {
+            "none": "Aucun",
+            "noChannel": "-"
+        },
+        "actions": {
+            "edit": "Modifier",
+            "remove": "Retirer"
+        },
+        "notifications": {
+            "deleteSuccess": "Agent retiré du service",
+            "deleteError": "Échec de la suppression de l'agent",
+            "refreshError": "Échec de l'actualisation des agents"
+        },
+        "createModal": {
+            "title": "Créer une unité temporaire",
+            "description": "Créer une unité temporaire pour le quart actuel",
+            "selectMember": "Sélectionner un membre",
+            "noMemberSelected": "Aucun membre sélectionné",
+            "officerName": "Nom de l'agent",
+            "officerNamePlaceholder": "ex., D Alexandre Dupont",
+            "badgeNumber": "Numéro de badge/ID",
+            "badgeNumberPlaceholder": "ex., 34",
+            "department": "Département",
+            "departmentPlaceholder": "ex., SAPR, LSPD",
+            "selectDepartment": "Sélectionner un département",
+            "status": "Statut",
+            "statusPlaceholder": "Sélectionner un statut",
+            "radioChannel": "Canal radio",
+            "radioChannelPlaceholder": "ex., 34",
+            "activeCall": "Appel actif",
+            "activeCallPlaceholder": "ex., #14",
+            "incident": "Incident",
+            "incidentPlaceholder": "ex., Contrôle routier sur la rue Principale",
+            "notes": "Notes",
+            "notesPlaceholder": "Toute information supplémentaire",
+            "cancel": "Annuler",
+            "createUnit": "Créer l'unité",
+            "createSuccess": "Unité temporaire créée",
+            "createError": "Échec de la création de l'agent"
+        },
+        "updateModal": {
+            "title": "Mettre à jour l'agent",
+            "description": "Mettre à jour les informations de l'agent",
+            "updateSuccess": "Agent mis à jour avec succès",
+            "updateError": "Échec de la mise à jour de l'agent",
+            "update": "Mettre à jour"
+        },
+        "memberSelector": {
+            "title": "Sélectionner un membre",
+            "description": "Choisir un membre de l'organisation",
+            "searchPlaceholder": "Rechercher par nom ou email",
+            "noResults": "Aucun membre trouvé",
+            "loading": "Chargement des membres...",
+            "error": "Échec du chargement des membres",
+            "select": "Sélectionner"
+        }
+    },
+    "Auth": {
+        "signIn": {
+            "title": "Connexion à",
+            "description": "Veuillez vous connecter à votre compte pour continuer.",
+            "emailLabel": "Email",
+            "emailPlaceholder": "nom@exemple.com",
+            "passwordLabel": "Mot de passe",
+            "passwordPlaceholder": "••••••••",
+            "forgotPassword": "Mot de passe oublié ?",
+            "signInButton": "Se connecter",
+            "noAccount": "Vous n'avez pas de compte ?",
+            "signUp": "S'inscrire",
+            "continueWith": "Continuer avec",
+            "orContinueWith": "Ou continuer avec",
+            "magicLink": "Se connecter avec un lien magique",
+            "sendMagicLink": "Envoyer un lien magique",
+            "magicLinkSent": "Lien magique envoyé ! Vérifiez votre boîte de réception."
+        },
+        "signUp": {
+            "title": "Créer un compte",
+            "description": "Entrez vos informations pour créer un compte.",
+            "nameLabel": "Nom",
+            "namePlaceholder": "Jean Dupont",
+            "emailLabel": "Email",
+            "emailPlaceholder": "nom@exemple.com",
+            "passwordLabel": "Mot de passe",
+            "passwordPlaceholder": "••••••••",
+            "signUpButton": "S'inscrire",
+            "haveAccount": "Vous avez déjà un compte ?",
+            "signIn": "Se connecter",
+            "agreeToTerms": "En vous inscrivant, vous acceptez nos Conditions d'Utilisation et notre Politique de Confidentialité.",
+            "continueWith": "Continuer avec"
+        },
+        "errors": {
+            "invalidCredentials": "Identifiants invalides. Veuillez vérifier votre email et votre mot de passe.",
+            "emailAlreadyExists": "Cet email existe déjà. Veuillez vous connecter.",
+            "unauthorized": "Non autorisé. Veuillez vous connecter pour continuer.",
+            "serverError": "Erreur serveur. Veuillez réessayer plus tard."
+        }
     }
 }

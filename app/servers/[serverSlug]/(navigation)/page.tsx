@@ -22,6 +22,8 @@ import {
   AlertTriangle
 } from "lucide-react";
 import { getRequiredCurrentServerCache } from "@/lib/react/cache";
+import { ActiveOfficersSection } from "../_activeOfficers/active-officers";
+import CheckPermission from "./permissions/check-permissions";
 
 
 export default async function RoutePage() {
@@ -95,6 +97,12 @@ export default async function RoutePage() {
   
   const medicalRecordCount = await prisma.medicalRecord.count({
     where: { organizationId }
+  });
+
+  // Récupérer les officiers actifs
+  const activeOfficers = await prisma.activeOfficer.findMany({
+    where: { organizationId },
+    orderBy: { createdAt: 'desc' }
   });
 
   return (
@@ -233,6 +241,15 @@ export default async function RoutePage() {
             </CardContent>
           </Card>
         </div>
+        <CheckPermission
+          permissions={["VIEW_LEO"]}
+          fallback={<div>Vous n'avez pas les permissions pour voir les officiers actifs.</div>}
+        >
+          <ActiveOfficersSection 
+            officers={activeOfficers} 
+            organizationId={organizationId} 
+          />
+        </CheckPermission>
       </LayoutContent>
     </Layout>
   );

@@ -637,5 +637,124 @@
         "helpText": "If you need assistance with paying your fine or have questions about the process, please contact us.",
         "contactUs": "Contact Us",
         "login": "Log in to My Account"
+    },
+    "ActiveOfficers": {
+        "title": "Active Officers",
+        "createTemporaryUnit": "Create Temporary Unit",
+        "noOfficersFound": "No active officers found",
+        "tableHeaders": {
+            "officer": "OFFICER",
+            "badgeNumber": "BADGE NUMBER",
+            "department": "DEPARTMENT",
+            "status": "STATUS",
+            "incident": "INCIDENT",
+            "activeCall": "ACTIVE CALL",
+            "radioChannel": "RADIO CHANNEL",
+            "actions": "ACTIONS"
+        },
+        "statusLabels": {
+            "onDuty": "On Duty",
+            "onBreak": "On Break",
+            "responding": "Responding",
+            "meal": "Meal Break",
+            "patrol": "On Patrol",
+            "emergency": "Emergency"
+        },
+        "placeholders": {
+            "none": "None",
+            "noChannel": "-"
+        },
+        "actions": {
+            "edit": "Edit",
+            "remove": "Remove"
+        },
+        "notifications": {
+            "deleteSuccess": "Officer removed from active duty",
+            "deleteError": "Failed to delete officer",
+            "refreshError": "Failed to refresh officers"
+        },
+        "createModal": {
+            "title": "Create Temporary Unit",
+            "description": "Create a temporary unit for the current shift",
+            "selectMember": "Select Member",
+            "noMemberSelected": "No member selected",
+            "officerName": "Officer Name",
+            "officerNamePlaceholder": "e.g., D Alexander Main",
+            "badgeNumber": "Badge/ID Number",
+            "badgeNumberPlaceholder": "e.g., 34",
+            "department": "Department",
+            "departmentPlaceholder": "e.g., SAPR, LSPD",
+            "selectDepartment": "Select a department",
+            "status": "Status",
+            "statusPlaceholder": "Select status",
+            "radioChannel": "Radio Channel",
+            "radioChannelPlaceholder": "e.g., 34",
+            "activeCall": "Active Call",
+            "activeCallPlaceholder": "e.g., #14",
+            "incident": "Incident",
+            "incidentPlaceholder": "e.g., Traffic Stop on Main St",
+            "notes": "Notes",
+            "notesPlaceholder": "Any additional information",
+            "cancel": "Cancel",
+            "createUnit": "Create Unit",
+            "createSuccess": "Temporary unit created",
+            "createError": "Failed to create officer"
+        },
+        "updateModal": {
+            "title": "Update Officer",
+            "description": "Update officer information",
+            "updateSuccess": "Officer updated successfully",
+            "updateError": "Failed to update officer",
+            "update": "Update"
+        },
+        "memberSelector": {
+            "title": "Select Member",
+            "description": "Choose a member from the organization",
+            "searchPlaceholder": "Search by name or email",
+            "noResults": "No members found",
+            "loading": "Loading members...",
+            "error": "Failed to load members",
+            "select": "Select"
+        }
+    },
+    "Auth": {
+        "signIn": {
+            "title": "Sign in to",
+            "description": "Please sign in to your account to continue.",
+            "emailLabel": "Email",
+            "emailPlaceholder": "name@example.com",
+            "passwordLabel": "Password",
+            "passwordPlaceholder": "••••••••",
+            "forgotPassword": "Forgot password?",
+            "signInButton": "Sign in",
+            "noAccount": "Don't have an account?",
+            "signUp": "Sign up",
+            "continueWith": "Continue with",
+            "orContinueWith": "Or continue with",
+            "magicLink": "Sign in with a magic link",
+            "sendMagicLink": "Send magic link",
+            "magicLinkSent": "Magic link sent! Check your email inbox."
+        },
+        "signUp": {
+            "title": "Create an account",
+            "description": "Enter your information to create an account.",
+            "nameLabel": "Name",
+            "namePlaceholder": "John Doe",
+            "emailLabel": "Email",
+            "emailPlaceholder": "name@example.com",
+            "passwordLabel": "Password",
+            "passwordPlaceholder": "••••••••",
+            "signUpButton": "Sign up",
+            "haveAccount": "Already have an account?",
+            "signIn": "Sign in",
+            "agreeToTerms": "By signing up, you agree to our Terms of Service and Privacy Policy.",
+            "continueWith": "Continue with"
+        },
+        "errors": {
+            "invalidCredentials": "Invalid credentials. Please check your email and password.",
+            "emailAlreadyExists": "Email already exists. Please sign in instead.",
+            "unauthorized": "Unauthorized. Please sign in to continue.",
+            "serverError": "Server error. Please try again later."
+        }
     }
 }
