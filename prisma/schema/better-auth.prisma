@@ -71,29 +71,28 @@ model Verification {
 }
 
 model Organization {
-
-  id            String         @id
-  name          String
-  slug          String?
-  logo          String?
-  createdAt     DateTime
-  metadata      String?
-  email         String?
+  id        String   @id
+  name      String
+  slug      String?
+  logo      String?
+  createdAt DateTime
+  metadata  String?
+  email     String?
 
   // Relations
 
   medicalRecords MedicalRecord[]
-  Department    Department[]
-  citizens      Citizen[]
-  vehicles      Vehicle[]
-  fines         Fine[]
-  penalCodes    PenalCode[]
-  judicialCases JudicialCase[]
-  warrants      Warrant[]
-  members       Member[]
-  invitations   Invitation[]
+  Department     Department[]
+  citizens       Citizen[]
+  vehicles       Vehicle[]
+  fines          Fine[]
+  penalCodes     PenalCode[]
+  judicialCases  JudicialCase[]
+  warrants       Warrant[]
+  members        Member[]
+  invitations    Invitation[]
   activeOfficers ActiveOfficer[]
-  
+  inviteLinks    InviteLink[]
 
   @@unique([slug])
   @@map("organization")

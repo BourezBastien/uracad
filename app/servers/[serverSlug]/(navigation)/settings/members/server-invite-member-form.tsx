@@ -1,11 +1,16 @@
 "use client";
 
+import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { z } from "zod";
+
+// Composants UI
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -16,7 +21,6 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
   useZodForm,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -27,60 +31,73 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LoadingButton } from "@/features/form/submit-button";
 import { authClient } from "@/lib/auth-client";
-import type { AuthRole } from "@/lib/auth/auth-permissions";
 import { RolesKeys } from "@/lib/auth/auth-permissions";
-import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { toast } from "sonner";
-import { z } from "zod";
+import { logger } from "@/lib/logger";
 
-const Schema = z.object({
-  email: z.string().email(),
+// Importation du gestionnaire de liens d'invitation
+import { InviteLinkManager } from "./invite-link-manager";
+
+// Types et schémas
+const EmailSchema = z.object({
+  email: z.string().email("Veuillez entrer une adresse email valide"),
   role: z.string().default("member"),
 });
 
-type SchemaType = z.infer<typeof Schema>;
+type EmailSchemaType = z.infer<typeof EmailSchema>;
+type AvailableRole = Exclude<(typeof RolesKeys)[number], "owner">;
+
+// Formatage des rôles
+const formatRoleName = (role?: string): string => {
+  if (!role) return "Inconnu";
+  return role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
+};
 
 export const ServerInviteMemberForm = () => {
+  // États
+  const [activeTab, setActiveTab] = useState("email");
   const [open, setOpen] = useState(false);
+  
+  // Data 
   const { data: activeServer } = authClient.useActiveOrganization();
 
-  const form = useZodForm({
-    schema: Schema,
-    defaultValues: {
-      email: "",
-      role: "member",
-    },
+  // Formulaires
+  const emailForm = useZodForm({
+    schema: EmailSchema,
+    defaultValues: { email: "", role: "member" },
   });
-  const router = useRouter();
 
-  const mutation = useMutation({
-    mutationFn: async (values: SchemaType) => {
+  // Invitation par email
+  const emailInviteMutation = useMutation({
+    mutationFn: async (values: EmailSchemaType) => {
       const result = await authClient.organization.inviteMember({
         email: values.email,
-        role: values.role as AuthRole,
+        role: values.role as AvailableRole,
       });
 
       if (result.error) {
-        toast.error(result.error.message);
-        return;
+        throw new Error(result.error.message);
       }
-
-      toast.success("Invitation sent");
-      setOpen(false);
-      router.refresh();
+      return result;
+    },
+    onSuccess: () => {
+      toast.success("Invitation envoyée avec succès");
+      emailForm.reset();
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Erreur lors de l'envoi de l'invitation");
+      logger.error(error);
     },
   });
 
   return (
-    <Dialog open={open} onOpenChange={(v) => setOpen(v)}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button type="button">Invite</Button>
+        <Button>Inviter</Button>
       </DialogTrigger>
-      <DialogContent className="p-0 sm:max-w-md">
+      <DialogContent className="p-0 sm:max-w-[600px]">
         <DialogHeader className="p-6">
           <div className="mt-4 flex justify-center">
             <Avatar className="size-16">
@@ -92,73 +109,82 @@ export const ServerInviteMemberForm = () => {
               </AvatarFallback>
             </Avatar>
           </div>
-          <DialogTitle className="text-center">Invite Teammates</DialogTitle>
-
-          <DialogDescription className="text-center">
-            Invite members to collaborate in your server
-          </DialogDescription>
+          <DialogTitle className="text-center">Inviter des membres</DialogTitle>
         </DialogHeader>
 
-        <div className="border-t p-6">
-          <Form
-            form={form}
-            onSubmit={async (v) => mutation.mutateAsync(v)}
-            className="flex flex-col gap-8"
-          >
-            <div className="flex items-end gap-4">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem className="flex-1">
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="colleague@company.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+        <Tabs defaultValue="email" value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="w-full grid grid-cols-2">
+            <TabsTrigger value="email">Email</TabsTrigger>
+            <TabsTrigger value="link">Lien d'invitation</TabsTrigger>
+          </TabsList>
 
-              <FormField
-                control={form.control}
-                name="role"
-                render={({ field }) => (
-                  <FormItem>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+          <div className="p-6">
+            {/* Onglet Email */}
+            <TabsContent value="email" className="mt-0">
+              <Form
+                form={emailForm}
+                onSubmit={(values) => emailInviteMutation.mutate(values)}
+                className="space-y-4"
+              >
+                <FormField
+                  control={emailForm.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select role" />
-                        </SelectTrigger>
+                        <Input placeholder="email@exemple.com" {...field} />
                       </FormControl>
-                      <SelectContent>
-                        {RolesKeys.filter((role) => role !== "owner").map(
-                          (role) => (
-                            <SelectItem key={role} value={role.toLowerCase()}>
-                              {role.charAt(0).toUpperCase() +
-                                role.slice(1).toLowerCase()}
-                            </SelectItem>
-                          ),
-                        )}
-                      </SelectContent>
-                    </Select>
-                  </FormItem>
-                )}
-              />
-            </div>
+                    </FormItem>
+                  )}
+                />
 
-            <LoadingButton
-              loading={mutation.isPending}
-              type="submit"
-              className="w-full"
-            >
-              Send invite
-            </LoadingButton>
-          </Form>
-        </div>
+                <FormField
+                  control={emailForm.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Rôle</FormLabel>
+                      <Select 
+                        onValueChange={field.onChange} 
+                        defaultValue={field.value as string}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Sélectionner un rôle" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {RolesKeys.filter(role => role !== "owner").map((role, index) => (
+                            <SelectItem 
+                              key={`email-role-${role}-${index}`} 
+                              value={role.toLowerCase()}
+                            >
+                              {formatRoleName(role)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+
+                <LoadingButton 
+                  loading={emailInviteMutation.isPending} 
+                  type="submit" 
+                  className="w-full"
+                >
+                  Envoyer l'invitation
+                </LoadingButton>
+              </Form>
+            </TabsContent>
+
+            {/* Onglet Lien d'invitation */}
+            <TabsContent value="link" className="mt-0">
+              <InviteLinkManager />
+            </TabsContent>
+          </div>
+        </Tabs>
       </DialogContent>
     </Dialog>
   );

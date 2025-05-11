@@ -19,5 +19,5 @@ export const getCallbackUrl = (
     return fallbackUrl;
   }
 
-  return callbackUrlBase;
+  return callbackUrl;
 };
