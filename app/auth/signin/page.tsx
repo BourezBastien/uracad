@@ -31,6 +31,7 @@ export default async function AuthSignInPage(props: PageParams) {
   }
 
   const providers = Object.keys(SocialProviders ?? {});
+  
 
   return (
     <Card className="mx-auto w-full max-w-md lg:max-w-lg lg:p-6">
