@@ -15,7 +15,7 @@ type PublicNavigationProps = PropsWithChildren & {
   serverSlug: string;
 };
 
-export function PublicNavigation({ children }: PublicNavigationProps) {
+export function PublicNavigation({ children, serverSlug }: PublicNavigationProps) {
   return (
     <SidebarProvider>
       <PublicSidebar />
