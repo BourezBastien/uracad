@@ -11,16 +11,26 @@ import { SiteConfig } from "@/site-config";
 import type { PageParams } from "@/types/next";
 import { redirect } from "next/navigation";
 import { SignInProviders } from "./sign-in-providers";
+import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
+
+export async function generateMetadata() {
+  const t = await getTranslations('Auth.signIn');
+  
+  return {
+    title: `${t('title')} ${SiteConfig.title}`,
+  };
+}
 
 export default async function AuthSignInPage(props: PageParams) {
   const user = await getUser();
+  const t = await getTranslations('Auth.signIn');
 
   if (user) {
     redirect("/account");
   }
 
   const providers = Object.keys(SocialProviders ?? {});
-  
 
   return (
     <Card className="mx-auto w-full max-w-md lg:max-w-lg lg:p-6">
@@ -34,11 +44,11 @@ export default async function AuthSignInPage(props: PageParams) {
           </Avatar>
         </div>
         <CardHeader className="text-center">
-          Sign in to {SiteConfig.title}
+          {t('title')} {SiteConfig.title}
         </CardHeader>
 
         <CardDescription className="text-center">
-          Please sign in to your account to continue.
+          {t('description')}
         </CardDescription>
       </CardHeader>
       <CardContent className="mt-8">

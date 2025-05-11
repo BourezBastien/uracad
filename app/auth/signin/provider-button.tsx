@@ -5,6 +5,7 @@ import { getCallbackUrl } from "@/lib/auth/auth-utils";
 import { useMutation } from "@tanstack/react-query";
 import { clsx } from "clsx";
 import type { ReactNode } from "react";
+import { useTranslations } from 'next-intl';
 
 const ProviderData: Record<string, { icon: ReactNode; name: string }> = {
   github: {
@@ -27,6 +28,7 @@ type ProviderButtonProps = {
 };
 
 export const ProviderButton = (props: ProviderButtonProps) => {
+  const t = useTranslations('Auth.signIn');
   const githubSignInMutation = useMutation({
     mutationFn: async () => {
       await authClient.signIn.social({
@@ -55,7 +57,7 @@ export const ProviderButton = (props: ProviderButtonProps) => {
       }}
     >
       {data.icon}
-      <span className="ml-2 text-base">Sign in with {data.name}</span>
+      <span className="ml-2 text-base">{t('continueWith')} {data.name}</span>
     </LoadingButton>
   );
 };

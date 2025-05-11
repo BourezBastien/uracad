@@ -1,8 +1,6 @@
 "use client";
 
 import { Divider } from "@/components/uracad/divider";
-import { Typography } from "@/components/uracad/typography";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ProviderButton } from "./provider-button";
 import {
@@ -17,12 +15,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { LoadingButton } from "@/features/form/submit-button";
 import { authClient } from "@/lib/auth-client";
-import { getCallbackUrl } from "@/lib/auth/auth-utils";
 import { unwrapSafePromise } from "@/lib/promises";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { z } from "zod";
-import { logger } from "@/lib/logger";
+import { useTranslations } from 'next-intl';
 
 const MagicLinkFormSchema = z.object({
   email: z.string().email(),
@@ -34,6 +31,7 @@ const MagicLinkForm = ({ callbackUrl }: { callbackUrl?: string }) => {
   const form = useZodForm({
     schema: MagicLinkFormSchema,
   });
+  const t = useTranslations('Auth.signIn');
 
   const signInMutation = useMutation({
     mutationFn: async (values: MagicLinkFormType) => {
@@ -47,6 +45,7 @@ const MagicLinkForm = ({ callbackUrl }: { callbackUrl?: string }) => {
       toast.error(error.message);
     },
     onSuccess: () => {
+      toast.success(t('magicLinkSent'));
       window.location.href = `${window.location.origin}/auth/verify`;
     },
   });
@@ -62,9 +61,9 @@ const MagicLinkForm = ({ callbackUrl }: { callbackUrl?: string }) => {
         name="email"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Email</FormLabel>
+            <FormLabel>{t('emailLabel')}</FormLabel>
             <FormControl>
-              <Input placeholder="john@doe.com" {...field} />
+              <Input placeholder={t('emailPlaceholder')} {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -76,7 +75,7 @@ const MagicLinkForm = ({ callbackUrl }: { callbackUrl?: string }) => {
         type="submit"
         className="ring-offset-card w-full ring-offset-2"
       >
-        Sign in with magic link
+        {t('sendMagicLink')}
       </LoadingButton>
     </Form>
   );
@@ -91,6 +90,7 @@ export const SignInProviders = ({
 }) => {
   const searchParams = useSearchParams();
   const callbackUrlParams = searchParams.get("callbackUrl");
+  const t = useTranslations('Auth.signIn');
 
   if (!callbackUrl) {
     callbackUrl = callbackUrlParams as string;
@@ -100,8 +100,8 @@ export const SignInProviders = ({
     <div className="flex flex-col gap-4 lg:gap-6">
       <MagicLinkForm callbackUrl={callbackUrl} />
       
-      {providers.length > 0 && <Divider>or</Divider>}
-      
+      {providers.length > 0 && <Divider>{t('orContinueWith')}</Divider>}
+
       <div className="flex flex-col gap-2 lg:gap-4">
         {providers.includes("github") ? (
           <ProviderButton providerId="github" callbackUrl={callbackUrl} />
@@ -115,13 +115,13 @@ export const SignInProviders = ({
       </div>
 
       {/* <Typography variant="muted" className="text-xs">
-        You don't have an account?{" "}
+        {t('noAccount')}{" "}
         <Typography
           variant="link"
           as={Link}
           href={`/auth/signup?callbackUrl=${callbackUrl}`}
         >
-          Sign up
+          {t('signUp')}
         </Typography>
       </Typography> */}
     </div>
