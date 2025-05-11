@@ -114,7 +114,7 @@ export const SignInProviders = ({
         ) : null}
       </div>
 
-      <Typography variant="muted" className="text-xs">
+      {/* <Typography variant="muted" className="text-xs">
         You don't have an account?{" "}
         <Typography
           variant="link"
@@ -123,7 +123,7 @@ export const SignInProviders = ({
         >
           Sign up
         </Typography>
-      </Typography>
+      </Typography> */}
     </div>
   );
 };
