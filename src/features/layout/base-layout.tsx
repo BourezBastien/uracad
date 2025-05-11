@@ -1,4 +1,3 @@
-import { Footer } from "@/features/layout/footer";
 import { Header } from "@/features/layout/header";
 import type { PropsWithChildren } from "react";
 
@@ -9,7 +8,6 @@ export function BaseLayout(props: PropsWithChildren) {
       <div className="min-h-full flex-1 pt-8 pb-16 lg:pt-12">
         {props.children}
       </div>
-      <Footer />
     </div>
   );
 }
