@@ -62,21 +62,21 @@ model CustomRole {
 // Active Officers Model for tracking active/on-duty law enforcement
 model ActiveOfficer {
   id             String       @id @default(cuid())
-  officerNumber  String       // Badge or officer number (e.g., "34", "SAPR-12")
-  officerName    String       // Name display (e.g., "34 - D Alexander Main")
-  department     String       // Department (e.g., "SAPR", "LSPD")
-  status         String       // Current status (e.g., "On-Duty", "Meal break")
-  callsign       String?      // Radio callsign if any
-  radioChannel   String?      // Which radio channel they're on
-  incident       String?      // Current incident ID if responding
-  notes          String?      // Additional notes
+  officerNumber  String // Badge or officer number (e.g., "34", "SAPR-12")
+  officerName    String // Name display (e.g., "34 - D Alexander Main")
+  department     String // Department (e.g., "SAPR", "LSPD")
+  status         String // Current status (e.g., "On-Duty", "Meal break")
+  callsign       String? // Radio callsign if any
+  radioChannel   String? // Which radio channel they're on
+  incident       String? // Current incident ID if responding
+  notes          String? // Additional notes
   isTemporary    Boolean      @default(false) // If it's a temporary unit
-  createdById    String?      // Who created this entry
+  createdById    String? // Who created this entry
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([organizationId])
   @@index([department])
@@ -105,9 +105,9 @@ model Citizen {
   driversLicense           String?
   driversLicenseCategories String?
 
-  driversLicensePoints     Int     @default(12) // Points de permis (12 points par défaut)
+  driversLicensePoints Int @default(12) // Points de permis (12 points par défaut)
 
-  pilotLicense           String?
+  pilotLicense String?
 
   pilotLicenseCategories String?
 
@@ -122,10 +122,10 @@ model Citizen {
 
   medicalRecords MedicalRecord[]
 
-  vehicles       Vehicle[]
-  fines          Fine[] // Relation avec les amendes reçues
-  judicialCases  JudicialCase[] // Relation avec les casiers judiciaires
-  warrants       Warrant[] // Relation avec les mandats
+  vehicles      Vehicle[]
+  fines         Fine[] // Relation avec les amendes reçues
+  judicialCases JudicialCase[] // Relation avec les casiers judiciaires
+  warrants      Warrant[] // Relation avec les mandats
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -381,4 +381,26 @@ model Warrant {
   @@index([citizenId])
   @@index([organizationId])
   @@index([judicialCaseId])
+}
+
+model InviteLink {
+  id            String    @id @default(cuid())
+  code          String    @unique
+  role          String // member, admin, etc.
+  maxUses       Int? // null means unlimited
+  uses          Int       @default(0)
+  expiresAt     DateTime? // null means never expires
+  isActive      Boolean   @default(true)
+  createdById   String? // Who created this invite link
+  createdByName String? // Name of the creator
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+  @@index([code])
+  @@index([isActive])
 }

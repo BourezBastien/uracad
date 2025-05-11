@@ -11,7 +11,6 @@ import { SiteConfig } from "@/site-config";
 import type { PageParams } from "@/types/next";
 import { redirect } from "next/navigation";
 import { SignInProviders } from "./sign-in-providers";
-import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
 export async function generateMetadata() {
@@ -25,9 +24,11 @@ export async function generateMetadata() {
 export default async function AuthSignInPage(props: PageParams) {
   const user = await getUser();
   const t = await getTranslations('Auth.signIn');
+  const searchParams = await props.searchParams;
+  const callbackUrl = typeof searchParams.callbackUrl === 'string' ? searchParams.callbackUrl : '/account';
 
   if (user) {
-    redirect("/account");
+    redirect(callbackUrl);
   }
 
   const providers = Object.keys(SocialProviders ?? {});

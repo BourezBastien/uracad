@@ -27,7 +27,7 @@ const MagicLinkFormSchema = z.object({
 
 type MagicLinkFormType = z.infer<typeof MagicLinkFormSchema>;
 
-const MagicLinkForm = ({ callbackUrl }: { callbackUrl?: string }) => {
+const MagicLinkForm = () => {
   const form = useZodForm({
     schema: MagicLinkFormSchema,
   });
@@ -98,7 +98,7 @@ export const SignInProviders = ({
 
   return (
     <div className="flex flex-col gap-4 lg:gap-6">
-      <MagicLinkForm callbackUrl={callbackUrl} />
+      <MagicLinkForm />
       
       {providers.length > 0 && <Divider>{t('orContinueWith')}</Divider>}
 

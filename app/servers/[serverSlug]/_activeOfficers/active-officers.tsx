@@ -87,22 +87,6 @@ export function ActiveOfficersSection({
     void refreshOfficers();
   }, [refreshOfficers]);
   
-  // Force refresh the entire page
-  const forceRefreshPage = () => {
-    toast.info("Actualisation de la page...");
-    
-    // Use router to refresh the page
-    router.refresh();
-    
-    // Force data refresh
-    void refreshOfficers();
-    
-    // For older browsers, add a fallback reload
-    setTimeout(() => {
-      window.location.reload();
-    }, 250);
-  };
-
   const handleDeleteOfficer = (id: string) => {
     startTransition(async () => {
       try {
