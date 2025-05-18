@@ -1,38 +1,50 @@
-import { getPlanLimits } from "@/lib/auth/auth-plans";
-import { combineWithParentMetadata } from "@/lib/metadata";
-import { prisma } from "@/lib/prisma";
 import { getRequiredCurrentServerCache } from "@/lib/react/cache";
-import { getServersMembers } from "@/query/server/get-servers-members";
-import type { PageParams } from "@/types/next";
 import { ServerMembersForm } from "./server-members-form";
+import { prisma } from "@/lib/prisma";
 
-export const generateMetadata = combineWithParentMetadata({
-  title: "Members",
-  description: "Manage your server members.",
-});
+export default async function ServerMembersPage() {
+  const server = await getRequiredCurrentServerCache();
+  
+  const members = server.members.map(member => ({
+    id: member.id,
+    userId: member.userId,
+    role: member.role,
+    user: {
+      id: member.userId,
+      email: member.user.email,
+      name: member.user.name,
+      image: member.user.image ?? null
+    }
+  }));
 
-export default async function RoutePage(props: PageParams) {
-  const server = await getRequiredCurrentServerCache({
-    permissions: {
-      member: ["create", "update", "delete"],
-    },
-  });
-
-  const members = await getServersMembers(server.id);
-
-  const maxMembers = getPlanLimits(server.subscription?.plan).members;
-
-  const invitations = await prisma.invitation.findMany({
+  const rawInvitations = await prisma.invitation.findMany({
     where: {
       organizationId: server.id,
+      status: "pending",
     },
   });
 
+  const invitations = rawInvitations.map(inv => ({
+    id: inv.id,
+    email: inv.email,
+    role: inv.role ?? "member", // Valeur par défaut si null
+    status: inv.status,
+    expiresAt: inv.expiresAt,
+  }));
+
   return (
-    <ServerMembersForm
-      invitations={invitations}
-      members={members}
-      maxMembers={maxMembers}
-    />
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium">Membres du serveur</h3>
+        <p className="text-sm text-muted-foreground">
+          Gérez les membres de votre serveur et leurs rôles.
+        </p>
+      </div>
+
+      <ServerMembersForm 
+        members={members}
+        invitations={invitations}
+      />
+    </div>
   );
 }

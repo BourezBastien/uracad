@@ -1,6 +1,5 @@
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
-import { ContactSupportDialog } from "@/features/contact/support/contact-support-dialog";
 import {
   Layout,
   LayoutContent,
@@ -30,7 +29,6 @@ export default function CancelPaymentPage() {
         <Link href="/" className={buttonVariants({ variant: "invert" })}>
           Home
         </Link>
-        <ContactSupportDialog />
       </LayoutContent>
     </Layout>
   );

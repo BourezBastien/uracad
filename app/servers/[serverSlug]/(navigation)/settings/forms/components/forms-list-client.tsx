@@ -27,8 +27,8 @@ export function FormsListClient({ forms, server }: FormsListClientProps) {
       await updateFormWebhook(settingsOpen, url, "", "");
       toast.success("Webhook enregistré !");
     } catch (e) {
-      logger.error("Erreur lors de l'enregistrement du webhook", e);
-      toast.error("Erreur lors de l'enregistrement du webhook");
+      logger.error("Error saving webhook", e);
+      toast.error("Error saving webhook");
     }
   };
 

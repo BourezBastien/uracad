@@ -1,13 +1,11 @@
 import {
   Card,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import type { PropsWithChildren } from "react";
 import { Typography } from "../../components/uracad/typography";
-import { ContactSupportDialog } from "../contact/support/contact-support-dialog";
 import { useTranslations } from "next-intl";
 
 type Error401Props = PropsWithChildren<{
@@ -26,9 +24,6 @@ export function Error401(props: Error401Props) {
           {t("description")}
         </CardDescription>
       </CardHeader>
-      <CardFooter className="flex flex-row gap-2">
-        <ContactSupportDialog />
-      </CardFooter>
     </Card>
   );
 }

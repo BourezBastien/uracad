@@ -16,15 +16,42 @@ import { SidebarUserButton } from "@/features/sidebar/sidebar-user-button";
 import { ChevronDown } from "lucide-react";
 import { getAccountNavigation } from "./account.links";
 import { ServersSelect } from "../../servers/[serverSlug]/(navigation)/_navigation/server-select";
-import type { AuthServer } from "@/lib/auth/auth-type";
+import type { Organization } from "@prisma/client";
+import type { AuthRole } from "@/lib/auth/auth-permissions";
 
-export function AccountSidebar({ userServers }: { userServers: AuthServer[] }) {
+// Type local pour AuthServer basé sur l'utilisation dans ServersSelect
+type AuthServer = {
+  id: string;
+  name: string;
+  slug: string | null;
+  logo: string | null;
+  image?: string | null;
+  memberRoles: AuthRole[];
+  createdAt: Date;
+  metadata: string | null;
+  email: string | null;
+};
+
+export function AccountSidebar({ userServers }: { userServers: Organization[] }) {
   const links: NavigationGroup[] = getAccountNavigation();
+  
+  // Convertir les serveurs au format attendu
+  const servers = userServers.map(server => ({
+    id: server.id,
+    name: server.name,
+    slug: server.slug,
+    logo: server.logo,
+    image: server.logo,
+    memberRoles: [] as AuthRole[],
+    createdAt: server.createdAt,
+    metadata: server.metadata,
+    email: server.email
+  })) satisfies AuthServer[];
 
   return (
     <Sidebar variant="inset">
       <SidebarHeader>
-        <ServersSelect servers={userServers} />
+        <ServersSelect servers={servers} />
       </SidebarHeader>
       <SidebarContent>
         {links.map((link) => (

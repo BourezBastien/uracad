@@ -61,7 +61,7 @@ export default function DeleteProfilePage() {
               <p className="leading-none font-medium">Organization Data</p>
               <p className="text-muted-foreground text-sm">
                 If you&apos;re an organization owner, all organization data will
-                be deleted and subscriptions cancelled
+                be deleted.
               </p>
             </div>
           </div>

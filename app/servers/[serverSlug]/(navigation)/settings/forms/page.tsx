@@ -4,6 +4,7 @@ import Link from "next/link";
 import { listForms } from "./form-actions";
 import { getRequiredCurrentServerCache } from "@/lib/react/cache";
 import { FormsTableClient } from "./components/forms-table-client";
+import { Button } from "@/components/ui/button";
 
 export default async function FormsAdminPage() {
   const server = await getRequiredCurrentServerCache();
@@ -16,10 +17,10 @@ export default async function FormsAdminPage() {
       </LayoutHeader>
       <LayoutActions>
         <Link href={`/servers/${server.slug}/settings/forms/new`}>
-          <button className="btn btn-outline flex items-center">
-            <PlusIcon className="w-4 h-4 mr-2" />
-            Nouveau formulaire
-          </button>
+        <Button>
+          <PlusIcon className="w-4 h-4" />
+          Nouveau formulaire
+        </Button>
         </Link>
       </LayoutActions>
       <LayoutContent>

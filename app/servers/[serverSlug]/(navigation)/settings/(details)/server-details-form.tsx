@@ -25,12 +25,14 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ServerDetailsFormSchema, type ServerDetailsFormSchemaType } from "../server.schema";
+import { ThemeSelector } from "@/components/theme-selector";
 
 type ProductFormProps = {
   defaultValues: ServerDetailsFormSchemaType;
+  organizationId: string;
 };
 
-export const ServerDetailsForm = ({ defaultValues }: ProductFormProps) => {
+export const ServerDetailsForm = ({ defaultValues, organizationId }: ProductFormProps) => {
   const form = useZodForm({
     schema: ServerDetailsFormSchema,
     defaultValues,
@@ -113,6 +115,17 @@ export const ServerDetailsForm = ({ defaultValues }: ProductFormProps) => {
               </FormItem>
             )}
           />
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Theme</CardTitle>
+          <CardDescription>
+            Choose a theme for your server.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ThemeSelector organizationId={organizationId} />
         </CardContent>
       </Card>
       <div className="flex justify-end p-6">

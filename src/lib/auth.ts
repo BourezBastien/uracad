@@ -1,4 +1,3 @@
-import { stripe as stripePlugin } from "@better-auth/stripe";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
@@ -8,17 +7,13 @@ import { ac, roles } from "./auth/auth-permissions";
 import { sendEmail } from "@/lib/mail/send-email";
 import { SiteConfig } from "@/site-config";
 import MarkdownEmail from "@email/markdown.email";
-import type Stripe from "stripe";
 import {
   setupDefaultServersOrInviteUser,
   setupResendCustomer,
 } from "./auth/auth-config-setup";
-import { AUTH_PLANS } from "./auth/auth-plans";
 import { env } from "./env";
-import { logger } from "./logger";
 import { prisma } from "./prisma";
 import { getServerUrl } from "./server-url";
-import { stripe } from "./stripe";
 
 type SocialProvidersType = Parameters<typeof betterAuth>[0]["socialProviders"];
 
@@ -161,50 +156,6 @@ export const auth = betterAuth({
             `,
           }),
         });
-      },
-    }),
-    stripePlugin({
-      stripeClient: stripe,
-      stripeWebhookSecret: env.STRIPE_WEBHOOK_SECRET ?? "",
-      createCustomerOnSignUp: true,
-      subscription: {
-        onSubscriptionUpdate: async ({ event, subscription }) => {
-          const object = event.data.object as Stripe.Subscription;
-          const priceId = object.items.data[0].price.id;
-
-          const matchingPlan = AUTH_PLANS.find(
-            (p) => p.annualDiscountPriceId === priceId || p.priceId === priceId,
-          );
-
-          if (!matchingPlan) {
-            logger.error("No matching plan found", { event, subscription });
-            return;
-          }
-
-          if (subscription.plan === matchingPlan.name) {
-            return;
-          }
-
-          // Sync the subscription plan with the matching plan
-          await prisma.subscription.update({
-            where: { id: subscription.id },
-            data: {
-              plan: matchingPlan.name,
-            },
-          });
-        },
-        authorizeReference: async ({ user, referenceId }) => {
-          const member = await prisma.member.findFirst({
-            where: {
-              userId: user.id,
-              organizationId: referenceId,
-            },
-          });
-
-          return member?.role === "owner" || member?.role === "admin";
-        },
-        enabled: true,
-        plans: AUTH_PLANS,
       },
     }),
     magicLink({

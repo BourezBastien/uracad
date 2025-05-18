@@ -70,25 +70,11 @@ export const getCurrentServer = async (params?: ServerParams) => {
     }
   }
 
-  const subscriptions = await auth.api.listActiveSubscriptions({
-    headers: await headers(),
-    query: {
-      referenceId: server.id,
-    },
-  });
-
-  const currentSubscription = subscriptions.find(
-    (s) =>
-      s.referenceId === server.id &&
-      (s.status === "active" || s.status === "trialing"),
-  );
-
   return {
     ...server,
     user: user.user,
     email: (server.email ?? null) as string | null,
     memberRoles: memberRoles,
-    subscription: currentSubscription ?? null,
   };
 };
 

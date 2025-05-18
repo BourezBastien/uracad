@@ -12,7 +12,6 @@ const statement = {
   ...defaultStatements,
   project: ["create", "share", "update", "delete"],
   tweet: ["create", "update", "delete"],
-  subscription: ["manage"],
   videos: ["create", "update", "delete", "view"],
 } as const satisfies Statements;
 
@@ -55,7 +54,6 @@ const member = ac.newRole({
 
 const admin = ac.newRole({
   project: ["create", "update"],
-  subscription: ["manage"],
   videos: ["view", "create", "update"],
   ...adminAc.statements,
 });

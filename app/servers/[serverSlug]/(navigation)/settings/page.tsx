@@ -26,5 +26,5 @@ export default async function RoutePage(props: PageParams) {
     notFound();
   }
 
-  return <ServerDetailsForm defaultValues={server} />;
+  return <ServerDetailsForm defaultValues={server} organizationId={serverId} />;
 }
