@@ -136,7 +136,7 @@ export default function FinesSection({
     setCopyInProgress(fineId);
     try {
 
-      const shareUrl = `${window.location.origin}/servers/${serverSlug}/public-share/fines/${fineId}`;
+      const shareUrl = `${window.location.origin}/servers/${serverSlug}/public/fines/${fineId}`;
       await navigator.clipboard.writeText(shareUrl);
       toast.success(t("actions.linkCopied"));
     } catch (error) {

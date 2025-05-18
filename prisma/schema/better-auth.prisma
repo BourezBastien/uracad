@@ -93,6 +93,7 @@ model Organization {
   invitations    Invitation[]
   activeOfficers ActiveOfficer[]
   inviteLinks    InviteLink[]
+  forms          Form[]
 
   @@unique([slug])
   @@map("organization")

@@ -1,4 +1,4 @@
-import { Shield, Settings, TriangleAlert, Users, CreditCard, User2, Home } from "lucide-react";
+import { Shield, Settings, TriangleAlert, Users, CreditCard, User2, Home, FileText } from "lucide-react";
 import type { AuthRole } from "@/lib/auth/auth-permissions";
 import type { LucideIcon } from "lucide-react";
 import type { IconProps } from "@radix-ui/react-icons/dist/types";
@@ -118,12 +118,6 @@ export const SERVER_LINKS: NavigationGroup[] = [
         roles: ["admin"],
       },
       {
-        href: `${SERVER_PATH}/settings/roles`,
-        Icon: Shield,
-        label: "Roles",
-        roles: ["admin"],
-      },
-      {
         href: `${SERVER_PATH}/settings/billing`,
         Icon: CreditCard,
         label: "Billing",
@@ -137,6 +131,23 @@ export const SERVER_LINKS: NavigationGroup[] = [
       },
     ],
   },
+  {
+    title: "Fonctionnalités",
+    links: [
+      {
+        href: `${SERVER_PATH}/settings/forms`,
+        Icon: FileText,
+        label: "Forms",
+        roles: ["admin"],
+      },
+      {
+        href: `${SERVER_PATH}/settings/roles`,
+        Icon: Shield,
+        label: "Roles",
+        roles: ["admin"],
+      },
+    ],
+  }
 ];
 
 // Fonction utilitaire pour remplacer le slug dans les chemins

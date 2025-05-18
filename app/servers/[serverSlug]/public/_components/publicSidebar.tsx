@@ -55,7 +55,7 @@ export function PublicSidebar() {
                 <ul className="space-y-1 px-2 py-2">
                   <li>
                     <Link 
-                      href={`/servers/${serverSlug}/public-share/fines`}
+                      href={`/servers/${serverSlug}/public/fines`}
                       className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
                     >
                       <PiggyBank className="h-4 w-4" />
@@ -64,7 +64,7 @@ export function PublicSidebar() {
                   </li>
                   <li>
                     <Link 
-                      href={`/servers/${serverSlug}/public-share/help`}
+                      href={`/servers/${serverSlug}/public/help`}
                       className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
                     >
                       <HelpCircle className="h-4 w-4" />
@@ -84,7 +84,7 @@ export function PublicSidebar() {
           variant="default"
           asChild
         >
-          <Link href={`/servers/${serverSlug}/public-share/login`} className="flex items-center justify-center gap-2">
+          <Link href={`/servers/${serverSlug}/public/login`} className="flex items-center justify-center gap-2">
             <LogIn className="h-4 w-4" />
             {t("login")}
           </Link>
