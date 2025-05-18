@@ -59,7 +59,7 @@ export async function processFineAction(formData: FormData) {
     });
     
     // Rediriger vers la même page avec un message de succès
-    const redirectUrl = `/servers/${fine.citizen.organizationId}/public-share/fines/${fineId}?success=${action}`;
+    const redirectUrl = `/servers/${fine.citizen.organizationId}/public/fines/${fineId}?success=${action}`;
     redirect(redirectUrl);
   } catch (error) {
     logger.error("Erreur lors du traitement de l'amende", error);

@@ -61,7 +61,7 @@ export const createInviteLink = serverAction.schema(
   
   return {
     ...link,
-    url: `${getServerUrl()}/servers/${link.organization.slug}/public-share/invite/${link.code}`,
+    url: `${getServerUrl()}/servers/${link.organization.slug}/public/invite/${link.code}`,
   };
 });
 
@@ -90,7 +90,7 @@ export async function getInviteLinks() {
   
   return links.map((link) => ({
     ...link,
-    url: `${baseUrl}/servers/${link.organization.slug}/public-share/invite/${link.code}`,
+    url: `${baseUrl}/servers/${link.organization.slug}/public/invite/${link.code}`,
   }));
 }
 
@@ -125,7 +125,7 @@ export const updateInviteLink = serverAction.schema(
   
   return {
     ...link,
-    url: `${getServerUrl()}/servers/${link.organization.slug}/public-share/invite/${link.code}`,
+    url: `${getServerUrl()}/servers/${link.organization.slug}/public/invite/${link.code}`,
   };
 });
 
@@ -157,7 +157,7 @@ export const regenerateInviteLink = serverAction.schema(
   
   return {
     ...link,
-    url: `${getServerUrl()}/servers/${link.organization.slug}/public-share/invite/${link.code}`,
+    url: `${getServerUrl()}/servers/${link.organization.slug}/public/invite/${link.code}`,
   };
 });
 

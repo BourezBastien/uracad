@@ -109,11 +109,11 @@ export const ServerInviteMemberForm = () => {
               </AvatarFallback>
             </Avatar>
           </div>
-          <DialogTitle className="text-center">Inviter des membres</DialogTitle>
+          <DialogTitle className="text-center">public</DialogTitle>
         </DialogHeader>
 
         <Tabs defaultValue="email" value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="w-full grid grid-cols-2">
+          <TabsList className="grid grid-cols-2 mx-auto">
             <TabsTrigger value="email">Email</TabsTrigger>
             <TabsTrigger value="link">Lien d'invitation</TabsTrigger>
           </TabsList>

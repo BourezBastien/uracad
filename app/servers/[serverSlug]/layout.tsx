@@ -23,8 +23,8 @@ export default async function RouteLayout(
   const headersList = await headers();
   const pathname = headersList.get("x-current-path") ?? "";
 
-  // Check if this is a public-share route first to avoid any auth checks
-  if (pathname.includes("/public-share/")) {
+  // Check if this is a public route first to avoid any auth checks
+  if (pathname.includes("/public/")) {
     // Just verify that the server exists
     const serverExists = await prisma.organization.findUnique({
       where: { slug: params.serverSlug },

@@ -381,16 +381,16 @@ export function InviteLinkManager({ onCopySuccess, serverSlug = "" }: InviteLink
   }
 
   return (
-    <div className="space-y-6">
-      {/* Generate new link */}
-      <div className="border rounded-md p-4">
-        <h3 className="text-sm font-medium mb-3">Générer un nouveau lien</h3>
+    <div className="max-w-xl w-full mx-auto flex flex-col gap-8 px-2 sm:px-4 py-2">
+      {/* Générer un nouveau lien */}
+      <section className="rounded-lg border p-4 flex flex-col gap-4 bg-background">
+        <h3 className="text-sm font-medium mb-2">Générer un nouveau lien</h3>
         <Form
           form={linkForm}
           onSubmit={(values) => generateLinkMutation.mutate(values)}
-          className="space-y-4"
+          className="flex flex-col gap-4"
         >
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <RoleSelector control={linkForm.control} name="role" />
 
             <FormField
@@ -447,19 +447,18 @@ export function InviteLinkManager({ onCopySuccess, serverSlug = "" }: InviteLink
               )}
             />
           </div>
-
           <LoadingButton 
             loading={generateLinkMutation.isPending} 
             type="submit" 
-            className="w-full"
+            className="w-full sm:w-auto mx-auto"
           >
             Générer un lien d'invitation
           </LoadingButton>
         </Form>
-      </div>
+      </section>
 
-      {/* Links list */}
-      <div>
+      {/* Liens d'invitation actifs */}
+      <section>
         <div className="flex justify-between items-center mb-3">
           <h3 className="text-sm font-medium">Liens d'invitation actifs</h3>
           <Button 
@@ -472,7 +471,6 @@ export function InviteLinkManager({ onCopySuccess, serverSlug = "" }: InviteLink
             Actualiser
           </Button>
         </div>
-
         {isLoading && displayLinks.length === 0 ? (
           <div className="p-6 text-center">
             <RefreshCw className="h-5 w-5 animate-spin mx-auto mb-2 text-muted-foreground" />
@@ -483,16 +481,16 @@ export function InviteLinkManager({ onCopySuccess, serverSlug = "" }: InviteLink
             <p className="text-sm text-muted-foreground">Aucun lien d'invitation trouvé</p>
           </div>
         ) : (
-          <div className="border rounded-md divide-y">
+          <div className="flex flex-col gap-4 max-h-80 overflow-y-auto">
             {displayLinks.map((link) => (
               <div 
                 key={link.displayId} 
                 className={cn(
-                  "p-4", 
+                  "rounded-lg border p-4 flex flex-col gap-2 bg-background",
                   link.optimistic ? "bg-gray-50" : ""
                 )}
               >
-                <div className="flex justify-between mb-2">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-1">
                   <div className="flex items-center gap-2">
                     <StatusBadge isActive={link.isActive} isOptimistic={link.optimistic} />
                     <RoleBadge role={link.role} />
@@ -501,15 +499,18 @@ export function InviteLinkManager({ onCopySuccess, serverSlug = "" }: InviteLink
                     {formatExpiration(link.expiresAt)}
                   </div>
                 </div>
-                
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="bg-muted px-1.5 py-0.5 rounded-sm text-sm truncate flex-1 overflow-x-auto">
-                    {link.url}
-                  </div>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                  <input
+                    className="bg-muted px-2 py-1 rounded w-full text-xs truncate cursor-pointer border border-input"
+                    value={link.url}
+                    readOnly
+                    onClick={async () => copyToClipboard(link.url)}
+                    title="Cliquer pour copier le lien"
+                  />
                   <Button 
                     variant="ghost" 
-                    size="sm" 
-                    className="h-8 w-8 p-0 flex-shrink-0"
+                    size="icon" 
+                    className="flex-shrink-0"
                     onClick={() => void copyToClipboard(link.url)}
                   >
                     <CopyIcon 
@@ -520,13 +521,12 @@ export function InviteLinkManager({ onCopySuccess, serverSlug = "" }: InviteLink
                     />
                   </Button>
                 </div>
-                
-                <div className="flex justify-between items-center">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-1">
                   <div className="text-xs text-muted-foreground">
                     {link.uses} {link.maxUses ? `/ ${link.maxUses}` : ''} utilisations
                   </div>
-                  <div className="flex items-center gap-1">
-                    <div className="flex items-center space-x-2 mr-2">
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2">
                       <Switch
                         id={`active-${link.id}`}
                         checked={link.isActive}
@@ -546,8 +546,8 @@ export function InviteLinkManager({ onCopySuccess, serverSlug = "" }: InviteLink
                     </div>
                     <Button 
                       variant="ghost" 
-                      size="sm" 
-                      className="h-8 w-8 p-0"
+                      size="icon" 
+                      className="flex-shrink-0"
                       disabled={link.optimistic}
                       onClick={() => {
                         if (!link.optimistic) {
@@ -560,8 +560,8 @@ export function InviteLinkManager({ onCopySuccess, serverSlug = "" }: InviteLink
                     </Button>
                     <Button 
                       variant="ghost" 
-                      size="sm" 
-                      className="h-8 w-8 p-0 text-red-500 hover:text-red-600"
+                      size="icon" 
+                      className="flex-shrink-0 text-red-500 hover:text-red-600"
                       disabled={link.optimistic}
                       onClick={() => {
                         if (!link.optimistic) {
@@ -578,7 +578,7 @@ export function InviteLinkManager({ onCopySuccess, serverSlug = "" }: InviteLink
             ))}
           </div>
         )}
-      </div>
+      </section>
     </div>
   );
 }
@@ -615,7 +615,7 @@ const createOptimisticLink = (
   }
   
   // Construire l'URL optimistique
-  const optimisticUrl = `${window.location.origin}/servers/${orgSlug}/public-share/invite/${tempCode}`;
+  const optimisticUrl = `${window.location.origin}/servers/${orgSlug}/public/invite/${tempCode}`;
   
   return {
     id: tempId,

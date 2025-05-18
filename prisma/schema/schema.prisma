@@ -404,3 +404,47 @@ model InviteLink {
   @@index([code])
   @@index([isActive])
 }
+
+model Form {
+  id             String    @id @default(cuid())
+  title          String
+  description    String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  questions      Question[]
+  responses      FormResponse[]
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  webhookUrl     String? // Ajout du webhook Discord
+  webhookMentions String? // IDs de rôles et users à mentionner (JSON)
+}
+
+model Question {
+  id        String   @id @default(cuid())
+  form      Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  formId    String
+  label     String
+  type      String   // "text", "textarea", "select", "checkbox", "radio", etc.
+  options   String?  // JSON string for select/radio/checkbox options
+  required  Boolean  @default(false)
+  order     Int
+  answers   Answer[]
+}
+
+model FormResponse {
+  id        String   @id @default(cuid())
+  form      Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  formId    String
+  userId    String?  // Optionnel si anonyme
+  createdAt DateTime @default(now())
+  answers   Answer[]
+}
+
+model Answer {
+  id             String   @id @default(cuid())
+  formResponse   FormResponse @relation(fields: [formResponseId], references: [id], onDelete: Cascade)
+  formResponseId String
+  question       Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId     String
+  value          String    // JSON string (pour gérer tous les types de réponses)
+}

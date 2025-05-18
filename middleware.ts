@@ -12,9 +12,9 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - admin (admin path)
-     * - public-share (public access paths)
+     * - public (public access paths)
      */
-    "/((?!api|_next/static|_next/image|favicon.ico|admin|public-share).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|admin|public).*)",
   ],
   runtime: "nodejs",
 };
@@ -22,8 +22,8 @@ export const config = {
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   
-  // Si c'est une route public-share, passer directement
-  if (pathname.includes('/public-share/')) {
+  // Si c'est une route public, passer directement
+  if (pathname.includes('/public/')) {
     const response = NextResponse.next();
     // Ajouter l'en-tête même pour les routes publiques
     response.headers.set("x-current-path", pathname);
