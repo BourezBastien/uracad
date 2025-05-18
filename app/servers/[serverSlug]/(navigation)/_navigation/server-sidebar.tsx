@@ -19,16 +19,15 @@ import { SidebarNavigationMenu } from "@/components/ui/sidebar-utils";
 import type { NavigationGroup } from "@/features/navigation/navigation.type";
 import { SidebarUserButton } from "@/features/sidebar/sidebar-user-button";
 import type { AuthRole } from "@/lib/auth/auth-permissions";
-import type { AuthServer } from "@/lib/auth/auth-type";
 import { ChevronDown } from "lucide-react";
 import { usePathname } from "next/navigation";
 import type { PropsWithChildren } from "react";
 import { useEffect, useState } from "react";  
 import { ServersSelect } from "./server-select";
 import { getServerNavigation } from "./server-navigation.links";
-import { UpgradeCard } from "./upgrade-server-card";
 import { logger } from "@/lib/logger";
 import { ServerCommand } from "./server-command";
+import type { Organization } from "@prisma/client";
 
 
 export function ServerSidebar({
@@ -38,7 +37,7 @@ export function ServerSidebar({
 }: {
   slug: string;
   roles: AuthRole[] | undefined;
-  userServers: AuthServer[];
+  userServers: Organization[];
 }) {
   const [userPermissions, setUserPermissions] = useState<string[]>([]);
 
@@ -94,7 +93,6 @@ export function ServerSidebar({
         ))}
       </SidebarContent>
       <SidebarFooter className="flex flex-col gap-2">
-        <UpgradeCard />
         <SidebarUserButton />
       </SidebarFooter>
       <SidebarRail />

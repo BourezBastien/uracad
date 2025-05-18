@@ -18,10 +18,11 @@ type AuthRole = "member" | "admin" | "owner";
 type ServerOrganization = {
   id: string;
   name: string;
-  slug: string;
-  logo?: string | null;
+  slug: string | null;
+  logo: string | null;
   createdAt: Date;
-  metadata?: Record<string, unknown>; 
+  metadata: string | null;
+  email: string | null;
 };
 
 // Custom type that extends Organization with required properties

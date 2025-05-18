@@ -1,9 +1,5 @@
 /* eslint-disable @typescript-eslint/promise-function-async */
 "use client";
-
-import type { PlanLimit } from "@/lib/auth/auth-plans";
-import { getPlanLimits } from "@/lib/auth/auth-plans";
-import type { Subscription } from "@better-auth/stripe";
 import type { PropsWithChildren } from "react";
 import { create } from "zustand";
 
@@ -12,8 +8,6 @@ type CurrentServerStore = {
   slug: string;
   name: string;
   image: string | null;
-  subscription: Subscription | null;
-  limits: PlanLimit;
 };
 
 /**
@@ -38,7 +32,7 @@ export const useCurrentServer = create<CurrentServerStore | null>(() => null);
 
 export const InjectCurrentServerStore = (
   props: PropsWithChildren<{
-    server?: Omit<CurrentServerStore, "limits">;
+    server?: CurrentServerStore;
   }>,
 ) => {
   if (!props.server) return props.children;
@@ -50,8 +44,6 @@ export const InjectCurrentServerStore = (
     slug: props.server.slug,
     name: props.server.name,
     image: props.server.image,
-    subscription: props.server.subscription,
-    limits: getPlanLimits(props.server.subscription?.plan),
   });
   return props.children;
 };

@@ -17,11 +17,20 @@ export default async function AuthNavigationWrapper(props: PropsWithChildren) {
   }
 
   const userServers = await getUsersServers();
+  const servers = userServers.map(server => ({
+    id: server.id,
+    name: server.name,
+    email: null,
+    logo: server.logo as string | null,
+    metadata: String(server.metadata) as string | null,
+    slug: server.slug,
+    createdAt: server.createdAt
+  }));
 
   return (
     <NavigationWrapper
       logoChildren={
-        <ServersSelect servers={userServers} currentserverSlug="new">
+        <ServersSelect servers={servers} currentserverSlug="new">
           <span>Server...</span>
         </ServersSelect>
       }

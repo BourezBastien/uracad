@@ -1,86 +1,47 @@
-import { headers } from "next/headers";
-import { unauthorized } from "next/navigation";
-import { auth } from "../auth";
-import type { AuthPermission, AuthRole } from "../auth/auth-permissions";
-import { getSession } from "../auth/auth-user";
-import { isInRoles } from "./is-in-roles";
+import { prisma } from "@/lib/prisma";
+import { getSession } from "@/lib/auth/auth-user";
+import { ActionError } from "@/lib/actions/safe-actions";
 
-type ServerParams = {
-  roles?: AuthRole[];
-  permissions?: AuthPermission;
-};
-
-export const getCurrentServer = async (params?: ServerParams) => {
-  const user = await getSession();
-
-  if (!user) {
-    return null;
+export async function getOrg(slug: string) {
+  const session = await getSession();
+  if (!session?.user.id) {
+    throw new ActionError("Authentication required");
   }
 
-  const server = await auth.api.getFullOrganization({
-    headers: await headers(),
-    query: {
-      organizationId: user.session.activeOrganizationId ?? undefined,
+  const organization = await prisma.organization.findFirst({
+    where: {
+      slug,
     },
-  });
-
-  if (!server) {
-    return null;
-  }
-
-  const memberRoles = server.members
-    .filter((member) => member.userId === user.session.userId)
-    .map((member) => member.role);
-
-  if (memberRoles.length === 0 || !isInRoles(memberRoles, params?.roles)) {
-    return null;
-  }
-
-  if (params?.permissions) {
-    const hasPermission = await auth.api.hasPermission({
-      headers: await headers(),
-      body: {
-        permission: params.permissions,
+    include: {
+      members: {
+        where: {
+          userId: session.user.id,
+        },
+        select: {
+          id: true,
+          role: true,
+        },
       },
-    });
-
-    if (!hasPermission.success) {
-      return null;
-    }
-  }
-
-  const subscriptions = await auth.api.listActiveSubscriptions({
-    headers: await headers(),
-    query: {
-      referenceId: server.id,
     },
   });
 
-  const currentSubscription = subscriptions.find(
-    (s) =>
-      s.referenceId === server.id &&
-      (s.status === "active" || s.status === "trialing"),
-  );
+  if (!organization) {
+    throw new ActionError("Organization not found");
+  }
+
+  const member = organization.members[0];
 
   return {
-    ...server,
-    user: user.user,
-    email: (server.email ?? null) as string | null,
-    memberRoles: memberRoles,
-    subscription: currentSubscription ?? null,
+    id: organization.id,
+    name: organization.name,
+    slug: organization.slug,
+    createdAt: organization.createdAt,
+    logo: organization.logo,
+    metadata: organization.metadata,
+    email: organization.email,
+    member: {
+      id: member.id,
+      role: member.role,
+    },
   };
-};
-
-export type CurrentServerPayload = NonNullable<
-  Awaited<ReturnType<typeof getCurrentServer>>
->;
-
-export const getRequiredCurrentServer = async (params?: ServerParams) => {
-  const result = await getCurrentServer(params);
-
-  if (!result) {
-    unauthorized();
-  }
-
-  return result;
-};
+}

@@ -61,7 +61,6 @@ export default async function RouteLayout(
           slug: server.slug,
           name: server.name,
           image: server.logo ?? null,
-          subscription: server.subscription,
         }}
       >
         {props.children}

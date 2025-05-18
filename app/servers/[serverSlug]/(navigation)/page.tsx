@@ -22,8 +22,8 @@ import {
   AlertTriangle
 } from "lucide-react";
 import { getRequiredCurrentServerCache } from "@/lib/react/cache";
-import { ActiveOfficersSection } from "../_activeOfficers/active-officers";
 import CheckPermission from "./permissions/check-permissions";
+import { ActiveOfficersSection } from "../_activeOfficers/active-officers";
 
 
 export default async function RoutePage() {

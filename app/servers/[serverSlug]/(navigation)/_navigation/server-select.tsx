@@ -12,7 +12,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import type { AuthServer } from "@/lib/auth/auth-type";
+import type { Organization } from "@prisma/client";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -21,7 +21,7 @@ import type { ReactNode } from "react";
 type ServersSelectProps = {
   currentserverSlug?: string;
   children?: ReactNode;
-  servers: AuthServer[];
+  servers: Organization[];
 };
 
 export const ServersSelect = (props: ServersSelectProps) => {
@@ -78,7 +78,7 @@ export const ServersSelect = (props: ServersSelectProps) => {
                         <AvatarFallback>
                           {server.name.slice(0, 1).toUpperCase()}
                         </AvatarFallback>
-                        {server.image ? <AvatarImage src={server.image} /> : null}
+                        {server.logo ? <AvatarImage src={server.logo} /> : null}
                       </Avatar>
                       <span className="line-clamp-1 text-left">{server.name}</span>
                     </Link>

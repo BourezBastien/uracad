@@ -4,7 +4,7 @@ import { logger } from "@/lib/logger";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { sendDiscordWebhook } from "../../../../../../lib/discord-webhook";
+import { sendDiscordWebhook } from "../../../../../../src/lib/discord-webhook";
 
 export async function submitFormResponse(formId: string, serverSlug: string, formData: FormData) {
   const answers = Array.from(formData.entries())

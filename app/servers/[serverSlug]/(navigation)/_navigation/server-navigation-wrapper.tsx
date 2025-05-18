@@ -29,9 +29,10 @@ export async function ServerNavigationWrapper({
     id: s.id,
     name: s.name,
     slug: s.slug || '',
-    logo: s.logo,
+    logo: s.logo ?? null,
     createdAt: s.createdAt,
-    metadata: s.metadata
+    metadata: s.metadata ?? null,
+    email: s.email ?? null
   }));
 
   // Pass the data to the client component

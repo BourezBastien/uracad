@@ -9,7 +9,6 @@ import {
 import Link from "next/link";
 import type { PropsWithChildren } from "react";
 import { Typography } from "../../components/uracad/typography";
-import { ContactSupportDialog } from "../contact/support/contact-support-dialog";
 
 type Page400Props = PropsWithChildren<{
   title?: string;
@@ -31,7 +30,6 @@ export function Error400(props: Page400Props) {
         <Link href="/" className={buttonVariants({ variant: "invert" })}>
           Go back home
         </Link>
-        <ContactSupportDialog />
       </CardFooter>
     </Card>
   );

@@ -2,11 +2,9 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ContactSupportDialog } from "@/features/contact/support/contact-support-dialog";
 import { env } from "@/lib/env";
 import { resend } from "@/lib/mail/resend";
 import { combineWithParentMetadata } from "@/lib/metadata";
@@ -61,9 +59,6 @@ const ErrorComponent = () => {
           We couldn't find your Resend contact. Please contact support.
         </CardDescription>
       </CardHeader>
-      <CardFooter>
-        <ContactSupportDialog />
-      </CardFooter>
     </Card>
   );
 };

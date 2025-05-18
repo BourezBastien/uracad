@@ -2,7 +2,6 @@
 
 import { Loader } from "@/components/uracad/loader";
 import { Typography } from "@/components/uracad/typography";
-import { Alert } from "@/components/ui/alert";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,7 +19,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Progress } from "@/components/ui/progress";
 import {
   Select,
   SelectContent,
@@ -31,35 +29,47 @@ import {
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { InlineTooltip } from "@/components/ui/tooltip";
 import { dialogManager } from "@/features/dialog-manager/dialog-manager-store";
-import { openGlobalDialog } from "@/features/global-dialog/global-dialog.store";
-import { authClient, useSession } from "@/lib/auth-client";
 import type { AuthRole } from "@/lib/auth/auth-permissions";
 import { RolesKeys } from "@/lib/auth/auth-permissions";
 import { unwrapSafePromise } from "@/lib/promises";
 import { cn } from "@/lib/utils";
-import type { ServerMembers } from "@/query/server/get-servers-members";
-import type { Invitation } from "@prisma/client";
+import { authClient } from "@/lib/auth-client";
+import { useSession } from "@/lib/auth-client";
 import { TabsList, TabsTrigger } from "@radix-ui/react-tabs";
 import { useMutation } from "@tanstack/react-query";
-import { Copy, MoreVertical, Trash, Zap } from "lucide-react";
+import { Copy, MoreVertical, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useOptimistic } from "react";
 import { toast } from "sonner";
 import { ServerInviteMemberForm } from "./server-invite-member-form";
 
 type ServerMembersFormProps = {
-  members: ServerMembers;
-  maxMembers: number;
-  invitations: Invitation[];
+  members: {
+    id: string;
+    userId: string;
+    role: string;
+    user: {
+      id: string;
+      email: string;
+      name: string;
+      image?: string | null;
+    };
+  }[];
+  invitations: {
+    id: string;
+    email: string;
+    role: string;
+    status: string;
+    expiresAt: Date;
+  }[];
 };
 
 export const ServerMembersForm = ({
-  maxMembers,
   members,
   invitations,
 }: ServerMembersFormProps) => {
   const router = useRouter();
-  const session = useSession();
+  const { data: session } = useSession();
   const [optimisticMembers, updateOptimisticMembers] = useOptimistic(
     members,
     (state, update: { type: string; memberId: string; role?: string }) => {
@@ -167,55 +177,8 @@ export const ServerMembersForm = ({
             Teammates that have access to this workspace.
           </CardDescription>
         </div>
-        <div className="flex-1"></div>
-        <div>
-          {optimisticMembers.length < maxMembers ? (
-            <ServerInviteMemberForm />
-          ) : (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-
-                const dialogId = dialogManager.add({
-                  title: "Oh no! You've reached the maximum number of members",
-                  description: (
-                    <>
-                      <Typography>
-                        You can't add more members to your server. Please
-                        upgrade your plan to add more members.
-                      </Typography>
-                      <Alert className="flex flex-col gap-2">
-                        <Progress
-                          value={(optimisticMembers.length / maxMembers) * 100}
-                        />
-                        <Typography variant="small">
-                          You have {optimisticMembers.length} members out of{" "}
-                          {maxMembers} members
-                        </Typography>
-                      </Alert>
-                    </>
-                  ),
-                  action: (
-                    <Button
-                      onClick={() => {
-                        openGlobalDialog("server-plan");
-                        dialogManager.remove(dialogId);
-                      }}
-                    >
-                      <Zap className="mr-2" size={16} />
-                      Upgrade your plan
-                    </Button>
-                  ),
-                });
-              }}
-            >
-              <Zap className="mr-2" size={16} />
-              Invite member
-            </Button>
-          )}
+        <div className="ml-auto">
+          <ServerInviteMemberForm />
         </div>
       </CardHeader>
       <Tabs defaultValue="members" className="mt-4 gap-0">
@@ -236,7 +199,7 @@ export const ServerMembersForm = ({
         <TabsContent value="members" className="mt-0 border-t pt-4">
           <CardContent className="flex flex-col">
             {optimisticMembers.map((member) => {
-              const isCurrentUser = member.user.id === session.data?.user.id;
+              const isCurrentUser = session?.user.id === member.user.id;
               return (
                 <div key={member.id}>
                   <div className="my-2 flex flex-wrap items-center gap-2">

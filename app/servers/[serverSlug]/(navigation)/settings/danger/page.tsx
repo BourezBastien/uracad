@@ -30,8 +30,7 @@ export default async function RoutePage(props: PageParams) {
         <CardHeader>
           <CardTitle>Delete the server</CardTitle>
           <CardDescription>
-            By deleting your server, you will lose all your data and your
-            subscription will be cancelled.
+            By deleting your server, you will lose all your data will be cancelled.
           </CardDescription>
           <CardDescription>No refund will be provided.</CardDescription>
         </CardHeader>

@@ -1,4 +1,4 @@
-import { Shield, Settings, TriangleAlert, Users, CreditCard, User2, Home, FileText } from "lucide-react";
+import { Shield, Settings, TriangleAlert, Users, User2, Home, FileText } from "lucide-react";
 import type { AuthRole } from "@/lib/auth/auth-permissions";
 import type { LucideIcon } from "lucide-react";
 import type { IconProps } from "@radix-ui/react-icons/dist/types";
@@ -115,12 +115,6 @@ export const SERVER_LINKS: NavigationGroup[] = [
         href: `${SERVER_PATH}/settings/members`,
         Icon: User2,
         label: "Members",
-        roles: ["admin"],
-      },
-      {
-        href: `${SERVER_PATH}/settings/billing`,
-        Icon: CreditCard,
-        label: "Billing",
         roles: ["admin"],
       },
       {
