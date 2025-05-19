@@ -131,13 +131,13 @@ export const SERVER_LINKS: NavigationGroup[] = [
       {
         href: `${SERVER_PATH}/settings/forms`,
         Icon: FileText,
-        label: "Forms",
+        label: "Formulaires",
         roles: ["admin"],
       },
       {
         href: `${SERVER_PATH}/settings/roles`,
         Icon: Shield,
-        label: "Roles",
+        label: "Rôles & Permissions",
         roles: ["admin"],
       },
     ],
