@@ -23,6 +23,7 @@ type ServerOrganization = {
   createdAt: Date;
   metadata: string | null;
   email: string | null;
+  colorsTheme: string | null;
 };
 
 // Custom type that extends Organization with required properties
@@ -48,6 +49,11 @@ export function ServerNavigation({
   userServers, 
   userPermissions 
 }: ServerNavigationProps) {
+  const mappedServers = userServers.map(server => ({
+    ...server,
+    colorsTheme: server.metadata ? JSON.parse(server.metadata).colorsTheme ?? null : null
+  }));
+
   return (
     <PermissionsProvider 
       permissions={userPermissions}
@@ -57,7 +63,7 @@ export function ServerNavigation({
         <ServerSidebar
           slug={server.slug}
           roles={server.memberRoles}
-          userServers={userServers}
+          userServers={mappedServers}
         />
         <SidebarInset className="border-accent border">
           <header className="flex h-16 shrink-0 items-center gap-2">

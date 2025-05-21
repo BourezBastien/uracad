@@ -1,15 +1,36 @@
+import { logger } from "./logger";
 
 export type Theme = {
   name: string;
   description: string;
   light: Record<string, string>;
   dark: Record<string, string>;
+  radius?: {
+    sm: string;
+    md: string;
+    lg: string;
+    xl: string;
+  };
+  border?: {
+    width: string;
+    style: string;
+  };
 };
 
 export const themes: Theme[] = [
   {
     name: "Bubblegum",
     description: "A playful and vibrant theme with pink accents",
+    radius: {
+      sm: "0.5rem",
+      md: "1rem",
+      lg: "1.5rem",
+      xl: "2rem"
+    },
+    border: {
+      width: "2px",
+      style: "solid"
+    },
     light: {
       "--background": "oklch(0.94 0.02 345.70)",
       "--foreground": "oklch(0.47 0 0)",
@@ -894,12 +915,14 @@ export const themes: Theme[] = [
 ];
 
 export function applyTheme(theme: Theme, isDark: boolean) {
+
   // Créer ou récupérer l'élément style pour les variables CSS
   let styleElement = document.getElementById('theme-variables');
   if (!styleElement) {
     styleElement = document.createElement('style');
     styleElement.id = 'theme-variables';
     document.head.appendChild(styleElement);
+    logger.info("[applyTheme] Created new style element");
   }
 
   // Générer le CSS pour les variables du thème
@@ -908,11 +931,22 @@ export function applyTheme(theme: Theme, isDark: boolean) {
       ${Object.entries(isDark ? theme.dark : theme.light)
         .map(([key, value]) => `${key}: ${value};`)
         .join('\n      ')}
+      ${theme.radius ? `
+      --radius-sm: ${theme.radius.sm};
+      --radius-md: ${theme.radius.md};
+      --radius-lg: ${theme.radius.lg};
+      --radius-xl: ${theme.radius.xl};
+      ` : ''}
+      ${theme.border ? `
+      --border-width: ${theme.border.width};
+      --border-style: ${theme.border.style};
+      ` : ''}
     }
   `;
 
   // Appliquer le CSS
   styleElement.textContent = css;
+  logger.info("[applyTheme] Theme applied successfully");
 }
 
 export function getThemePreview(theme: Theme, isDark: boolean) {

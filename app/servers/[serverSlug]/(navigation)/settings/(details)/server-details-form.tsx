@@ -30,9 +30,10 @@ import { ThemeSelector } from "@/components/theme-selector";
 type ProductFormProps = {
   defaultValues: ServerDetailsFormSchemaType;
   organizationId: string;
+  currentTheme?: string;
 };
 
-export const ServerDetailsForm = ({ defaultValues, organizationId }: ProductFormProps) => {
+export const ServerDetailsForm = ({ defaultValues, organizationId, currentTheme }: ProductFormProps) => {
   const form = useZodForm({
     schema: ServerDetailsFormSchema,
     defaultValues,
@@ -125,7 +126,7 @@ export const ServerDetailsForm = ({ defaultValues, organizationId }: ProductForm
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <ThemeSelector organizationId={organizationId} />
+          <ThemeSelector organizationId={organizationId} currentTheme={currentTheme} />
         </CardContent>
       </Card>
       <div className="flex justify-end p-6">

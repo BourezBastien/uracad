@@ -93,4 +93,38 @@ export async function updateFormWebhook(formId: string, webhookUrl: string, role
     where: { id: formId },
     data: { webhookUrl, webhookMentions },
   });
+}
+
+// Mettre à jour un formulaire avec ses questions
+export async function updateFormWithQuestions(formId: string, data: { 
+  title: string; 
+  description: string; 
+  questions: { 
+    label: string; 
+    type: string; 
+    options?: string; 
+    required: boolean; 
+    order: number; 
+  }[] 
+}) {
+  // Supprimer toutes les questions existantes
+  await prisma.question.deleteMany({
+    where: { formId }
+  });
+
+  // Mettre à jour le formulaire et créer les nouvelles questions
+  return prisma.form.update({
+    where: { id: formId },
+    data: {
+      title: data.title,
+      description: data.description,
+      questions: {
+        create: data.questions.map((q, i) => ({
+          ...q,
+          order: i,
+        })),
+      },
+    },
+    include: { questions: true },
+  });
 } 

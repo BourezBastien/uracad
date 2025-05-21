@@ -7,6 +7,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import type { PropsWithChildren } from "react";
 import { SessionProvider } from "next-auth/react";
+import { OrganizationThemeProvider } from "@/components/organization-theme-provider";
+import type { Organization } from "@prisma/client";
+
+type OrganizationWithTheme = Partial<Organization> & {
+  colorsTheme?: string | null;
+  metadata?: Record<string, unknown> | null;
+};
 
 // Configurer le client avec des options qui limitent les requêtes en arrière-plan
 const queryClient = new QueryClient({
@@ -21,7 +28,7 @@ const queryClient = new QueryClient({
   },
 });
 
-export const Providers = ({ children }: PropsWithChildren) => {
+export const Providers = ({ children, organization }: PropsWithChildren<{ organization: OrganizationWithTheme | null }>) => {
   return (
     <SessionProvider>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
@@ -29,7 +36,9 @@ export const Providers = ({ children }: PropsWithChildren) => {
           <Toaster />
           <DialogManagerRenderer />
           <SearchParamsMessageToastSuspended />
-          {children}
+          <OrganizationThemeProvider metadata={organization?.metadata}>
+            {children}
+          </OrganizationThemeProvider>
         </QueryClientProvider>
       </ThemeProvider>
     </SessionProvider>

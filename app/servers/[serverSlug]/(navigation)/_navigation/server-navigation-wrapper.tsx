@@ -32,7 +32,8 @@ export async function ServerNavigationWrapper({
     logo: s.logo ?? null,
     createdAt: s.createdAt,
     metadata: s.metadata ?? null,
-    email: s.email ?? null
+    email: s.email ?? null,
+    colorsTheme: s.metadata ? JSON.parse(s.metadata).colorsTheme ?? null : null
   }));
 
   // Pass the data to the client component
