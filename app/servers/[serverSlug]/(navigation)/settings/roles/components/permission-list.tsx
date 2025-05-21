@@ -22,32 +22,29 @@ export function PermissionList({
   
   // Check if all permissions are selected
   const areAllPermissionsSelected = () => {
-    // Count total available permissions
-    const totalPermissions = permissionCategories.reduce(
-      (total, category) => total + category.permissions.length,
-      0
+    // Get all permission IDs from categories
+    const allPermissionIds = permissionCategories.flatMap(category => 
+      category.permissions.map(permission => permission.id)
     );
     
-    // Count how many are checked
-    const selectedCount = Object.values(selectedPermissions).filter(Boolean).length;
-    
-    return selectedCount === totalPermissions && totalPermissions > 0;
+    // Check if all permissions exist and are true in selectedPermissions
+    return allPermissionIds.length > 0 && 
+           allPermissionIds.every(id => selectedPermissions[id] === true);
   };
 
   // Toggle all permissions
   const handleToggleAll = () => {
-    // Create a new permissions object with all values set at once
-    const updatedPermissions = { ...selectedPermissions };
     const newValue = !areAllPermissionsSelected();
     
-    // Update all permissions in the updatedPermissions object
-    permissionCategories.forEach(category => {
+    // Créer un nouvel objet avec toutes les permissions
+    const updatedPermissions = permissionCategories.reduce((acc, category) => {
       category.permissions.forEach(permission => {
-        updatedPermissions[permission.id] = newValue;
+        acc[permission.id] = newValue;
       });
-    });
+      return acc;
+    }, {} as Record<string, boolean>);
     
-    // Call onChange with a special flag to indicate a bulk update
+    // Appeler onChange avec l'objet complet des permissions
     onChange("__all__", newValue, updatedPermissions);
   };
 

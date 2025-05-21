@@ -19,6 +19,7 @@ export default async function RoutePage(props: PageParams) {
       logo: true,
       name: true,
       email: true,
+      metadata: true,
     },
   });
 
@@ -26,5 +27,8 @@ export default async function RoutePage(props: PageParams) {
     notFound();
   }
 
-  return <ServerDetailsForm defaultValues={server} organizationId={serverId} />;
+  const parsedMetadata = server.metadata ? JSON.parse(server.metadata) : null;
+  const currentTheme = parsedMetadata?.colorsTheme ?? "Default";
+
+  return <ServerDetailsForm defaultValues={server} organizationId={serverId} currentTheme={currentTheme} />;
 }

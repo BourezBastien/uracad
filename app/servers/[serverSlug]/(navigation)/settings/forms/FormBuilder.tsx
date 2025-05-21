@@ -11,8 +11,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useRouter } from "next/navigation";
 import type { z } from "zod";
 import { FormSchema } from "./form-schemas";
-import { createForm } from "./form-actions";
+import { createForm, updateFormWithQuestions } from "./form-actions";
 import type { Form, Question } from "@prisma/client";
+import { toast } from "sonner";
+import { logger } from "@/lib/logger";
 
 type BuilderQuestion = {
   label: string;
@@ -70,15 +72,52 @@ export function FormBuilder({
   };
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    // Vérifier que le titre n'est pas vide
+    if (!data.title.trim()) {
+      toast.error("Le titre du formulaire est requis");
+      return;
+    }
+
+    // Vérifier que toutes les questions ont un label
+    const emptyQuestions = questions.filter(q => !q.label.trim());
+    if (emptyQuestions.length > 0) {
+      toast.error("Toutes les questions doivent avoir un intitulé");
+      return;
+    }
+
+    // Vérifier que les questions de type select/checkbox/radio ont des options
+    const questionsWithoutOptions = questions.filter(
+      q => (q.type === "select" || q.type === "checkbox" || q.type === "radio") && !q.options?.trim()
+    );
+    if (questionsWithoutOptions.length > 0) {
+      toast.error("Les questions de type liste, cases à cocher ou boutons radio doivent avoir des options");
+      return;
+    }
+
     setLoading(true);
     try {
       if (initialForm) {
-        // TODO: Implement updateForm action
-        // await updateForm({ ...data, organizationId, questions, formId: initialForm.id });
+        await updateFormWithQuestions(initialForm.id, {
+          title: data.title.trim(),
+          description: (data.description ?? "").trim(),
+          questions: questions.map(q => ({
+            label: q.label.trim(),
+            type: q.type,
+            options: q.options?.trim() ?? "",
+            required: q.required,
+            order: q.order
+          }))
+        });
+        toast.success("Formulaire mis à jour avec succès");
       } else {
         await createForm({ ...data, organizationId, questions });
+        toast.success("Formulaire créé avec succès");
       }
       router.push(`/servers/${serverSlug}/settings/forms`);
+      router.refresh();
+    } catch (error) {
+      logger.error("Erreur lors de la sauvegarde du formulaire:", error);
+      toast.error("Une erreur est survenue lors de la sauvegarde du formulaire");
     } finally {
       setLoading(false);
     }
@@ -89,8 +128,14 @@ export function FormBuilder({
       <h1 className="text-2xl font-bold mb-4">{initialForm ? "Modifier le formulaire" : "Créer un formulaire"}</h1>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div>
-          <label className="block font-medium mb-1">Titre</label>
-          <Input {...form.register("title")} required />
+          <label className="block font-medium mb-1">
+            Titre <span className="text-destructive">*</span>
+          </label>
+          <Input 
+            {...form.register("title")} 
+            required 
+            className={!form.getValues("title").trim() ? "border-destructive" : ""}
+          />
         </div>
         <div>
           <label className="block font-medium mb-1">Description</label>
@@ -106,7 +151,8 @@ export function FormBuilder({
                     placeholder="Intitulé de la question"
                     value={q.label}
                     onChange={e => updateQuestion(idx, "label", e.target.value)}
-                    className="flex-1"
+                    className={`flex-1 ${!q.label.trim() ? "border-destructive" : ""}`}
+                    required
                   />
                   <Select value={q.type} onValueChange={val => updateQuestion(idx, "type", val)}>
                     <SelectTrigger className="w-32">
@@ -134,6 +180,8 @@ export function FormBuilder({
                     placeholder="Options (séparées par des virgules)"
                     value={q.options}
                     onChange={e => updateQuestion(idx, "options", e.target.value)}
+                    className={!q.options?.trim() ? "border-destructive" : ""}
+                    required
                   />
                 )}
               </div>
@@ -149,4 +197,4 @@ export function FormBuilder({
       </form>
     </div>
   );
-} 
+}

@@ -70,13 +70,14 @@ model Verification {
 }
 
 model Organization {
-  id        String   @id
-  name      String
-  slug      String?
-  logo      String?
-  createdAt DateTime
-  metadata  String?
-  email     String?
+  id          String   @id
+  name        String
+  slug        String?
+  logo        String?
+  createdAt   DateTime
+  metadata    String?
+  email       String?
+  colorsTheme String?  // Nom du thème de couleurs choisi
 
   // Relations
 

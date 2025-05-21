@@ -15,6 +15,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 import { getLocale, getMessages } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
+import { getCurrentServerCache } from "@/lib/react/cache";
 
 export const metadata: Metadata = {
   title: SiteConfig.title,
@@ -33,6 +34,7 @@ export default async function RootLayout({
 }: LayoutParams & { modal?: ReactNode }) {
   const locale = await getLocale();
   const messages = await getMessages();
+  const organization = await getCurrentServerCache();
   return (
     <>
       <html lang={locale} className="h-full" suppressHydrationWarning>
@@ -46,7 +48,7 @@ export default async function RootLayout({
           )}
         >
           <NuqsAdapter>
-            <Providers>
+            <Providers organization={organization}>
               <NextTopLoader
                 delay={100}
                 showSpinner={false}

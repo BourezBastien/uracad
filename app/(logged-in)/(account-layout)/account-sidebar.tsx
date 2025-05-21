@@ -30,6 +30,7 @@ type AuthServer = {
   createdAt: Date;
   metadata: string | null;
   email: string | null;
+  colorsTheme: string | null;
 };
 
 export function AccountSidebar({ userServers }: { userServers: Organization[] }) {
@@ -45,7 +46,8 @@ export function AccountSidebar({ userServers }: { userServers: Organization[] })
     memberRoles: [] as AuthRole[],
     createdAt: server.createdAt,
     metadata: server.metadata,
-    email: server.email
+    email: server.email,
+    colorsTheme: server.metadata ? JSON.parse(server.metadata).colorsTheme ?? null : null
   })) satisfies AuthServer[];
 
   return (

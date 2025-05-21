@@ -4,7 +4,6 @@ import Link from "next/link";
 import type { PropsWithChildren } from "react";
 import { Layout } from "../page/layout";
 import { ThemeToggle } from "../theme/theme-toggle";
-import LocaleSwitcher from "@/components/i18n/LocaleSwitcher";
 
 export function HeaderBase({ children }: PropsWithChildren) {
   return (
@@ -26,7 +25,6 @@ export function HeaderBase({ children }: PropsWithChildren) {
           <nav className="flex items-center space-x-1">
             {children}
             <ThemeToggle />
-            <LocaleSwitcher />
           </nav>
         </div>
       </Layout>
